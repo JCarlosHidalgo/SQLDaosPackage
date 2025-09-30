@@ -1,0 +1,34 @@
+services:
+
+  # APACHE-TO-DISPLAY-TEST-RESULTS
+  apache:
+    container_name: SQLDaosPackageApache
+    image: httpd:2.4.65-alpine
+    ports:
+      - "9090:80"
+    volumes:
+      - sql-daos-package-test-results:/usr/local/apache2/htdocs/
+    depends_on:
+      package-test:
+        condition: service_completed_successfully
+
+  package-test:
+    container_name: SQLDaosPackageTest
+    build:
+      dockerfile: Dockerfile
+    volumes:
+      - sql-daos-package-test-results:/test-env/SQLDaosPackage.Test/TestResults/
+
+  database-for-testing:
+    container_name: SQLDaosPackageMySQLHost
+    image: mysql:9
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=admin
+      - MYSQL_DATABASE=SchemaTest
+    volumes:
+      - ./SQLDaosPackage.Test/db-environment/init-db:/docker-entrypoint-initdb.d
+
+volumes:
+  sql-daos-package-test-results:

@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PackageId>JuanCarlosHS.SQLDaosPackage</PackageId>
+    <Version>1.0.0</Version>
+    <Author>JuanCarlosHidalgoSosa</Author>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Product>SqlDAOS</Product>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MySql.Data" Version="9.3.0" />
+    <None Include="readme.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
+
+</Project>
