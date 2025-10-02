@@ -8,11 +8,7 @@ namespace SQLDaosPackage.Injectors;
 /// </summary>
  /*!
     This class applies \c IDataInjector constraint to inject data from .csv files to any 
-    MySQL database.\n
-    Namespaces Dependencies:
-   - From \c MySql.Data :
-      - \c MySql.Data
-      - \c MySql.Data.MySqlClient
+    MySQL database.
   */
 public class DataInjector : IDataInjector
 {
@@ -25,15 +21,16 @@ public class DataInjector : IDataInjector
     public int InjectData(MySqlConnection connection)
     {
         int injectionResult = 0;
-
+    
         try
         {
             MySqlCommand injectionCommand = new MySqlCommand(_injectionCommand, connection);
-            injectionCommand.ExecuteNonQuery();
+            injectionResult = injectionCommand.ExecuteNonQuery();
         }
-        catch (MySql.Data.MySqlClient.MySqlException ex)
-        {
-            injectionResult = ex.Number;
+        catch (Exception ex)
+        { 
+            injectionResult = ex.HResult;
+            return -1; 
         }
         return injectionResult;
     }

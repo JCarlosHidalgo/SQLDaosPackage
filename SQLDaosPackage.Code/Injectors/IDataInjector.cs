@@ -7,12 +7,8 @@ namespace SQLDaosPackage.Injectors;
 /// Interface to inject data files over a MySQL database.
 /// </summary>
  /*!
-   This interface is used to detect any .csv files inside a MySQL server and 
-   inject them into the database.\n
-   Namespaces Dependencies:
-   - From \c MySql.Data :
-      - \c MySql.Data
-      - \c MySql.Data.MySqlClient
+   This interface is used to detect any .csv files inside a MySQL server and inject them 
+   into the database.
  */
 public interface IDataInjector
 {

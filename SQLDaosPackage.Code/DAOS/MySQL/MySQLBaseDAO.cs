@@ -5,9 +5,15 @@ using MySql.Data.MySqlClient;
 
 namespace SQLDaosPackage.DAOS.MySQL;
 
+/// <summary>
+/// Refactor common behaviour of MySQL DAOs.
+/// </summary>
+ /*!
+    This class implements the basic setup that any other MySQL DAO must have.
+  */
 public abstract class MySQLBaseDAO<T> : IDAO<T>
 {
-    //! MySQL connection to initialize interaction with database.
+    //! MySQL connection to determine database host.
      /*!
         By default, this attribute must be initialized at inherited class' constructor.
      */
