@@ -10,8 +10,5 @@ RUN dotnet tool restore
 
 RUN dotnet restore
 
-RUN dotnet test -s ./.runsettings
-
-WORKDIR /test-env/SQLDaosPackage.Test/TestResults
-#CMD tail -f /dev/null
-ENTRYPOINT ["dotnet","reportgenerator","-reports:\"**/*.cobertura.xml\"","-targetdir:."]
+#dotnet test -s ./.runsettings
+#dotnet reportgenerator -reports:"**/*.cobertura.xml" -targetdir:./TestResults

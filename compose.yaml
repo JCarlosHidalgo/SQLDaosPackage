@@ -12,13 +12,22 @@ services:
       package-test:
         condition: service_completed_successfully
 
+  # TESTING-PACKAGE
   package-test:
     container_name: SQLDaosPackageTest
     build:
       dockerfile: Dockerfile
     volumes:
       - sql-daos-package-test-results:/test-env/SQLDaosPackage.Test/TestResults/
+    command : bash -c "
+        dotnet test -s ./.runsettings
+        && dotnet reportgenerator -reports:"**/*.cobertura.xml" -targetdir:./TestResults
+      "
+    depends_on:
+      database-for-testing:
+        condition: service_healthy    
 
+  # MYSQL-HOST-FOR-TESTING
   database-for-testing:
     container_name: SQLDaosPackageMySQLHost
     image: mysql:9
@@ -29,6 +38,11 @@ services:
       - MYSQL_DATABASE=SchemaTest
     volumes:
       - ./SQLDaosPackage.Test/db-environment/init-db:/docker-entrypoint-initdb.d
+      - ./SQLDaosPackage.Test/db-environment/data:/var/lib/mysql-files/
+    healthcheck:
+      test: ["CMD-SHELL", "mysql -u root -padmin -e 'select * from SchemaTest.User'"]
+      interval: 2s
+      retries: 60
 
 volumes:
   sql-daos-package-test-results:
