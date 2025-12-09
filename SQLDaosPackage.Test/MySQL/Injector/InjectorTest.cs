@@ -1,29 +1,32 @@
+using NUnit.Framework.Legacy;
+
+using SQLDaosPackage.Injectors;
+
 using System.Data;
 using System.Text;
 
 using MySql.Data.MySqlClient;
-using NUnit.Framework.Legacy;
 
-using SQLDaosPackage.Injectors;
+using Test.MySQL.Utils;
 
 namespace Test.MySQL.Connector;
 
 [TestFixture]
 public class InjectorTest
 {
-    private MySqlConnection? _databaseConnection()
-    {
-        MySqlConnection _connection = new MySqlConnection("server=SQLDaosPackageMySQLHost;port=3306;uid=root;pwd=admin;database=SchemaTest;Allow User Variables=True");
-        try
-        {
-            _connection.Open();
-        }
-        catch
-        {
-            _connection = null!;
-        }
+    private MySqlConnection? _databaseConnection;
 
-        return _connection;
+    [OneTimeSetUp]
+    public void Init_connection()
+    {
+        MySQLConnectionUtils test = new MySQLConnectionUtils();
+        _databaseConnection = test.GetConnection();
+    }
+
+    [OneTimeTearDown]
+    public void Cleanup()
+    {
+        _databaseConnection?.Dispose();
     }
 
     class Injector : DataInjector
@@ -49,11 +52,12 @@ public class InjectorTest
     [Test]
     public void Check_succesfull_csv_file_injection()
     {
-        MySqlConnection? _connection = _databaseConnection();
+        MySqlConnection? _connection = _databaseConnection;
         ClassicAssert.NotNull(_connection);
         
         DataInjector injector = new Injector();
         int injectionResult = injector.InjectData(_connection);
+
         Assert.That(injectionResult, Is.EqualTo(12));
         TruncateAllTables(_connection);
     }

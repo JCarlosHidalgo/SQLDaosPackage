@@ -17,7 +17,7 @@ public abstract class MySQLBaseDAO<T> : IDAO<T>
      /*!
         By default, this attribute must be initialized at inherited class' constructor.
      */
-    public required MySqlConnection _connection;
+    protected internal MySqlConnection? _connection;
 
     //! MySQL command to initialize any interaction with database.
      /*!
@@ -40,7 +40,7 @@ public abstract class MySQLBaseDAO<T> : IDAO<T>
         To set this attribute, use class' constructor.\n
         Attribute's value must be exactly the same as table's name in database.
      */
-    protected internal string _tableName = string.Empty;
+    protected internal string? _tableName;
 
     //! StringBuilder to build all MySQL commands.
      /*!
@@ -96,8 +96,18 @@ public abstract class MySQLBaseDAO<T> : IDAO<T>
     // Implementation to Create() method from IDAO interface.
     public int Create(T entity)
     {
+        int creationResult = 0;
         _sb = CreateCommandIntoStringBuilder(entity);
-        return GetCommandByText(_sb).ExecuteNonQuery();
+        try
+        {
+            creationResult = GetCommandByText(_sb).ExecuteNonQuery();
+        }
+        catch (Exception ex)
+        {
+            creationResult = ex.HResult;
+            creationResult = -1;
+        }
+        return creationResult;
     }
 
     // Implementation to ReadAll() method from IDAO interface.

@@ -22,6 +22,7 @@ public abstract class MySQLTwoForeignDAO<T> : MySQLBaseDAO<T>, ITwoForeignDAO<T>
     // Implementation to Read() method from ITwoForeignDAO interface.
     public T? Read(Guid id1, Guid id2)
     {
+        T? entity = default(T);
         _sb = new StringBuilder();
         _sb.Append("SELECT * FROM ").Append(_tableName)
             .Append(" WHERE ").Append(_firstForeignKey).Append(" = '").Append(id1.ToString()).Append("' ")
@@ -29,11 +30,10 @@ public abstract class MySQLTwoForeignDAO<T> : MySQLBaseDAO<T>, ITwoForeignDAO<T>
         _mySqlReader = GetCommandByText(_sb).ExecuteReader();
         if (_mySqlReader.Read())
         {
-            return MapReaderToEntity();
+            entity = MapReaderToEntity();
         }
-       
         _mySqlReader.Close();
-        return default(T);
+        return entity;
     }
 
     // Implementation to Delete() method from ITwoForeignDAO interface.

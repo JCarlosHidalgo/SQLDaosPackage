@@ -9,12 +9,40 @@ CREATE TABLE IF NOT EXISTS User(
     Role            VARCHAR(50)
 );
 
+DELIMITER //
+CREATE PROCEDURE GetUsersWithRoleMatching(IN userRole VARCHAR(50))
+BEGIN
+    SELECT
+        *
+    FROM
+        User u
+    WHERE
+        u.Role = userRole;
+END //
+DELIMITER ;
+
+-- TENANT
+CREATE TABLE IF NOT EXISTS Tenant(
+    Id VARCHAR(36) PRIMARY KEY NOT NULL,
+    Name VARCHAR(200)
+);
+
+-- TENANT DOMAIN
+CREATE TABLE IF NOT EXISTS TenantDomain(
+    UserId VARCHAR(36),
+    TenantId VARCHAR(36),
+    FOREIGN KEY (UserId) REFERENCES User(Id),
+    FOREIGN KEY (TenantId) REFERENCES Tenant(Id)
+);
+
 -- TRUNCATE ALL TABLES
 DELIMITER //
 CREATE PROCEDURE TruncateAllTables()
 BEGIN
     SET FOREIGN_KEY_CHECKS = 0;
     TRUNCATE TABLE User;
+    TRUNCATE TABLE Tenant;
+    TRUNCATE TABLE TenantDomain;
     SET FOREIGN_KEY_CHECKS = 1;
 END //
 DELIMITER ;

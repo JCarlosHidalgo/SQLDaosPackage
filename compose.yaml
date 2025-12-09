@@ -5,7 +5,7 @@ services:
     container_name: SQLDaosPackageApache
     image: httpd:2.4.65-alpine
     ports:
-      - "9090:80"
+      - "8888:80"
     volumes:
       - sql-daos-package-test-results:/usr/local/apache2/htdocs/
     depends_on:
