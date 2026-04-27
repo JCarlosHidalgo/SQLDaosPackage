@@ -149,7 +149,9 @@ public abstract class MySQLBaseDAO<T> : IDAO<T>
         _sb = CreateCommandIntoStringBuilder(entity);
         try
         {
-            creationResult = await GetCommandByText(_sb).ExecuteNonQueryAsync();
+            creationResult = await MySQLRetryPolicy.ExecuteAsync(
+                _connection,
+                () => GetCommandByText(_sb).ExecuteNonQueryAsync());
         }
         catch (Exception ex)
         {
@@ -162,22 +164,28 @@ public abstract class MySQLBaseDAO<T> : IDAO<T>
     // Implementation to ReadAllAsync() method from IDAO interface.
     public async Task<List<T>> ReadAllAsync()
     {
-        _dbCommand = new MySqlCommand();
-        _dbCommand.Connection = _connection;
-        _dbCommand.CommandText = _tableName;
-        _dbCommand.CommandType = CommandType.TableDirect;
-        _mySqlReader = (MySqlDataReader)await _dbCommand.ExecuteReaderAsync();
-        return await MapReaderToEntitiesListAsync();
+        return await MySQLRetryPolicy.ExecuteAsync(_connection, async () =>
+        {
+            _dbCommand = new MySqlCommand();
+            _dbCommand.Connection = _connection;
+            _dbCommand.CommandText = _tableName;
+            _dbCommand.CommandType = CommandType.TableDirect;
+            _mySqlReader = (MySqlDataReader)await _dbCommand.ExecuteReaderAsync();
+            return await MapReaderToEntitiesListAsync();
+        });
     }
 
     // Implementation to UpdateAsync() method from IDAO interface.
     public async Task<int> UpdateAsync(T entity)
     {
         _sb = UpdateCommandIntoStringBuilder(entity);
-        _mySqlReader = (MySqlDataReader)await GetCommandByText(_sb).ExecuteReaderAsync();
-        int toReturn = _mySqlReader.RecordsAffected;
-        await _mySqlReader.CloseAsync();
-        return toReturn;
+        return await MySQLRetryPolicy.ExecuteAsync(_connection, async () =>
+        {
+            _mySqlReader = (MySqlDataReader)await GetCommandByText(_sb).ExecuteReaderAsync();
+            int toReturn = _mySqlReader.RecordsAffected;
+            await _mySqlReader.CloseAsync();
+            return toReturn;
+        });
     }
 
     //! \c MySqlCommand function to setup a DAO command.

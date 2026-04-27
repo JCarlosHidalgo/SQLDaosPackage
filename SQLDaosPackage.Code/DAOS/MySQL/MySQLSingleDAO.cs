@@ -48,17 +48,20 @@ public abstract class MySQLSingleDAO<T> : MySQLBaseDAO<T>, ISingleDAO<T>
     // Implementation to ReadAsync() method from ISingleDAO interface.
     public async Task<T?> ReadAsync(Guid id)
     {
-        T? entity = default(T);
         _sb = new StringBuilder();
         _sb.Append("SELECT * FROM ").Append(_tableName).Append(" WHERE Id = '").Append(id.ToString()).Append("';");
-        MySqlCommand com = GetCommandByText(_sb);
-        _mySqlReader = (MySqlDataReader)await com.ExecuteReaderAsync();
-        if (await _mySqlReader.ReadAsync())
+        return await MySQLRetryPolicy.ExecuteAsync(_connection, async () =>
         {
-            entity = MapReaderToEntity();
-        }
-        await _mySqlReader.CloseAsync();
-        return entity;
+            T? entity = default(T);
+            MySqlCommand com = GetCommandByText(_sb);
+            _mySqlReader = (MySqlDataReader)await com.ExecuteReaderAsync();
+            if (await _mySqlReader.ReadAsync())
+            {
+                entity = MapReaderToEntity();
+            }
+            await _mySqlReader.CloseAsync();
+            return entity;
+        });
     }
 
     // Implementation to DeleteAsync() method from ISingleDAO interface.
@@ -66,11 +69,14 @@ public abstract class MySQLSingleDAO<T> : MySQLBaseDAO<T>, ISingleDAO<T>
     {
         _sb = new StringBuilder();
         _sb.Append("DELETE FROM ").Append(_tableName).Append(" WHERE Id = '").Append(id.ToString()).Append("';");
-        MySqlCommand com = GetCommandByText(_sb);
-        _mySqlReader = (MySqlDataReader)await com.ExecuteReaderAsync();
-        int recordsAffected = _mySqlReader.RecordsAffected;
-        await _mySqlReader.CloseAsync();
+        return await MySQLRetryPolicy.ExecuteAsync(_connection, async () =>
+        {
+            MySqlCommand com = GetCommandByText(_sb);
+            _mySqlReader = (MySqlDataReader)await com.ExecuteReaderAsync();
+            int recordsAffected = _mySqlReader.RecordsAffected;
+            await _mySqlReader.CloseAsync();
 
-        return recordsAffected > 0;
+            return recordsAffected > 0;
+        });
     }
 }

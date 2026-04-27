@@ -41,8 +41,11 @@ public class DataInjector : IDataInjector
 
         try
         {
-            MySqlCommand injectionCommand = new MySqlCommand(_injectionCommand, connection);
-            injectionResult = await injectionCommand.ExecuteNonQueryAsync();
+            injectionResult = await DAOS.MySQL.MySQLRetryPolicy.ExecuteAsync(connection, () =>
+            {
+                MySqlCommand injectionCommand = new MySqlCommand(_injectionCommand, connection);
+                return injectionCommand.ExecuteNonQueryAsync();
+            });
         }
         catch (Exception ex)
         {

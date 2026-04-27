@@ -53,18 +53,21 @@ public abstract class MySQLTwoForeignDAO<T> : MySQLBaseDAO<T>, ITwoForeignDAO<T>
     // Implementation to ReadAsync() method from ITwoForeignDAO interface.
     public async Task<T?> ReadAsync(Guid id1, Guid id2)
     {
-        T? entity = default(T);
         _sb = new StringBuilder();
         _sb.Append("SELECT * FROM ").Append(_tableName)
             .Append(" WHERE ").Append(_firstForeignKey).Append(" = '").Append(id1.ToString()).Append("' ")
             .Append(" AND ").Append(_secondForeignKey).Append(" = '").Append(id2.ToString()).Append("';");
-        _mySqlReader = (MySqlDataReader)await GetCommandByText(_sb).ExecuteReaderAsync();
-        if (await _mySqlReader.ReadAsync())
+        return await MySQLRetryPolicy.ExecuteAsync(_connection, async () =>
         {
-            entity = MapReaderToEntity();
-        }
-        await _mySqlReader.CloseAsync();
-        return entity;
+            T? entity = default(T);
+            _mySqlReader = (MySqlDataReader)await GetCommandByText(_sb).ExecuteReaderAsync();
+            if (await _mySqlReader.ReadAsync())
+            {
+                entity = MapReaderToEntity();
+            }
+            await _mySqlReader.CloseAsync();
+            return entity;
+        });
     }
 
     // Implementation to DeleteAsync() method from ITwoForeignDAO interface.
@@ -74,10 +77,13 @@ public abstract class MySQLTwoForeignDAO<T> : MySQLBaseDAO<T>, ITwoForeignDAO<T>
         _sb.Append("DELETE FROM ").Append(_tableName)
             .Append(" WHERE ").Append(_firstForeignKey).Append(" = '").Append(id1.ToString()).Append("' ")
             .Append(" AND ").Append(_secondForeignKey).Append(" = '").Append(id2.ToString()).Append("';");
-        _mySqlReader = (MySqlDataReader)await GetCommandByText(_sb).ExecuteReaderAsync();
-        int recordsAffected = _mySqlReader.RecordsAffected;
-        await _mySqlReader.CloseAsync();
+        return await MySQLRetryPolicy.ExecuteAsync(_connection, async () =>
+        {
+            _mySqlReader = (MySqlDataReader)await GetCommandByText(_sb).ExecuteReaderAsync();
+            int recordsAffected = _mySqlReader.RecordsAffected;
+            await _mySqlReader.CloseAsync();
 
-        return recordsAffected > 0;
+            return recordsAffected > 0;
+        });
     }
 }
