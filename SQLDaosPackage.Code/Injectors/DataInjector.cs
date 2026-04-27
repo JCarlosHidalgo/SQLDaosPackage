@@ -21,16 +21,33 @@ public class DataInjector : IDataInjector
     public int InjectData(MySqlConnection connection)
     {
         int injectionResult = 0;
-    
+
         try
         {
             MySqlCommand injectionCommand = new MySqlCommand(_injectionCommand, connection);
             injectionResult = injectionCommand.ExecuteNonQuery();
         }
         catch (Exception ex)
-        { 
+        {
             injectionResult = ex.HResult;
-            return -1; 
+            return -1;
+        }
+        return injectionResult;
+    }
+
+    public async Task<int> InjectDataAsync(MySqlConnection connection)
+    {
+        int injectionResult = 0;
+
+        try
+        {
+            MySqlCommand injectionCommand = new MySqlCommand(_injectionCommand, connection);
+            injectionResult = await injectionCommand.ExecuteNonQueryAsync();
+        }
+        catch (Exception ex)
+        {
+            injectionResult = ex.HResult;
+            return -1;
         }
         return injectionResult;
     }

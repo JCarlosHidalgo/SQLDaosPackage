@@ -31,4 +31,13 @@ public interface IDAO<T>
         \return The number of rows affected by the query.
      */
     int Update(T element);
+
+    //! Asynchronous version of \c Create.
+    Task<int> CreateAsync(T element);
+
+    //! Asynchronous version of \c ReadAll.
+    Task<List<T>> ReadAllAsync();
+
+    //! Asynchronous version of \c Update.
+    Task<int> UpdateAsync(T element);
 }

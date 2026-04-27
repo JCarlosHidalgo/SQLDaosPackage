@@ -18,4 +18,7 @@ public interface IDataInjector
         \return The number of rows inserted on the database.
      */
     int InjectData(MySqlConnection connection);
+
+    //! Asynchronous version of \c InjectData.
+    Task<int> InjectDataAsync(MySqlConnection connection);
 }

@@ -26,4 +26,10 @@ public interface ISingleDAO<T> : IDAO<T>
         \return Boolean indicating if operation has effect over table.
      */
     bool Delete(Guid id);
+
+    //! Asynchronous version of \c Read.
+    Task<T?> ReadAsync(Guid id);
+
+    //! Asynchronous version of \c Delete.
+    Task<bool> DeleteAsync(Guid id);
 }

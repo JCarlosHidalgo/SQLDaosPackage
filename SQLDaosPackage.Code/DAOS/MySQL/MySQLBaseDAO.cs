@@ -79,6 +79,17 @@ public abstract class MySQLBaseDAO<T> : IDAO<T>
      */
     protected internal abstract List<T> MapReaderToEntitiesList();
 
+    //! Asynchronous version of \c MapReaderToEntitiesList.
+     /*!
+        Default implementation delegates to the synchronous version. Override to use
+        \c _mySqlReader.ReadAsync() during row iteration when true async row reads are
+        desired.
+     */
+    protected internal virtual Task<List<T>> MapReaderToEntitiesListAsync()
+    {
+        return Task.FromResult(MapReaderToEntitiesList());
+    }
+
     //! String builder to set the command's text to create a new entity.
      /*!
         By default, when implementing this function, \c Create() method is ready
@@ -128,6 +139,44 @@ public abstract class MySQLBaseDAO<T> : IDAO<T>
         _mySqlReader = GetCommandByText(_sb).ExecuteReader();
         int toReturn = _mySqlReader.RecordsAffected;
         _mySqlReader.Close();
+        return toReturn;
+    }
+
+    // Implementation to CreateAsync() method from IDAO interface.
+    public async Task<int> CreateAsync(T entity)
+    {
+        int creationResult = 0;
+        _sb = CreateCommandIntoStringBuilder(entity);
+        try
+        {
+            creationResult = await GetCommandByText(_sb).ExecuteNonQueryAsync();
+        }
+        catch (Exception ex)
+        {
+            creationResult = ex.HResult;
+            creationResult = -1;
+        }
+        return creationResult;
+    }
+
+    // Implementation to ReadAllAsync() method from IDAO interface.
+    public async Task<List<T>> ReadAllAsync()
+    {
+        _dbCommand = new MySqlCommand();
+        _dbCommand.Connection = _connection;
+        _dbCommand.CommandText = _tableName;
+        _dbCommand.CommandType = CommandType.TableDirect;
+        _mySqlReader = (MySqlDataReader)await _dbCommand.ExecuteReaderAsync();
+        return await MapReaderToEntitiesListAsync();
+    }
+
+    // Implementation to UpdateAsync() method from IDAO interface.
+    public async Task<int> UpdateAsync(T entity)
+    {
+        _sb = UpdateCommandIntoStringBuilder(entity);
+        _mySqlReader = (MySqlDataReader)await GetCommandByText(_sb).ExecuteReaderAsync();
+        int toReturn = _mySqlReader.RecordsAffected;
+        await _mySqlReader.CloseAsync();
         return toReturn;
     }
 

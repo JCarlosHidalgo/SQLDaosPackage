@@ -251,4 +251,114 @@ public class BaseDAOTest
         bool deleted = dao.Delete(user.Id);
         ClassicAssert.True(deleted);
     }
+
+    [Test]
+    public async Task Check_succesfully_user_creation_async()
+    {
+        TruncateAllTables(_databaseConnection!);
+        UserBaseDAO dao = new UserBaseDAO();
+        User user = new User
+                    {
+                        Id = Guid.NewGuid(),
+                        UserName = "UserName",
+                        Role = "Role"
+                    };
+
+        int creationResult = await dao.CreateAsync(user);
+
+        Assert.That(creationResult, Is.EqualTo(1));
+    }
+
+    [Test]
+    public async Task Check_duplicated_user_creation_async()
+    {
+        TruncateAllTables(_databaseConnection!);
+        UserBaseDAO dao = new UserBaseDAO();
+        User user = new User
+                    {
+                        Id = Guid.NewGuid(),
+                        UserName = "UserName",
+                        Role = "Role"
+                    };
+
+        int creationResult = await dao.CreateAsync(user);
+        Assert.That(creationResult, Is.EqualTo(1));
+
+        int secondCreationResult = await dao.CreateAsync(user);
+        Assert.That(secondCreationResult, Is.EqualTo(-1));
+    }
+
+    [Test]
+    public async Task Check_read_all_operation_async()
+    {
+        TruncateAllTables(_databaseConnection!);
+        UserBaseDAO dao = new UserBaseDAO();
+        List<User> users = new List<User>{
+            new User()
+            {
+                Id = new Guid("00000000-0000-0000-0000-000000000000"),
+                UserName = "UserName1",
+                Role = "Role1"
+            },
+            new User()
+            {
+                Id = new Guid("00000000-0000-0000-0000-000000000001"),
+                UserName = "UserName2",
+                Role = "Role2"
+            },
+            new User()
+            {
+                Id = new Guid("00000000-0000-0000-0000-000000000002"),
+                UserName = "UserName3",
+                Role = "Role3"
+            },
+        };
+
+        foreach (User user in users)
+            await dao.CreateAsync(user);
+
+        List<User> usersFromDB = await dao.ReadAllAsync();
+
+        Assert.That(usersFromDB.ElementAt(0).Id, Is.EqualTo(users.ElementAt(0).Id));
+        Assert.That(usersFromDB.ElementAt(1).Id, Is.EqualTo(users.ElementAt(1).Id));
+        Assert.That(usersFromDB.ElementAt(2).Id, Is.EqualTo(users.ElementAt(2).Id));
+    }
+
+    [Test]
+    public async Task Check_update_operation_async()
+    {
+        TruncateAllTables(_databaseConnection!);
+        UserBaseDAO dao = new UserBaseDAO();
+        Guid guid = Guid.NewGuid();
+        User user = new User()
+            {
+                Id = guid,
+                UserName = "UserName",
+                Role = "UserRole"
+            };
+        await dao.CreateAsync(user);
+
+        user.UserName = "AnotherUserName";
+        await dao.UpdateAsync(user);
+
+        User userFromDB = (await dao.ReadAsync(guid))!;
+
+        Assert.That(userFromDB.UserName, Is.EqualTo("AnotherUserName"));
+    }
+
+    [Test]
+    public async Task Check_delete_operation_async()
+    {
+        TruncateAllTables(_databaseConnection!);
+        UserBaseDAO dao = new UserBaseDAO();
+        User user = new User()
+            {
+                Id = Guid.NewGuid(),
+                UserName = "UserName",
+                Role = "UserRole"
+            };
+        await dao.CreateAsync(user);
+        bool deleted = await dao.DeleteAsync(user.Id);
+        ClassicAssert.True(deleted);
+    }
 }

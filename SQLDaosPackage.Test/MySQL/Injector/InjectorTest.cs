@@ -72,4 +72,28 @@ public class InjectorTest
 
         Assert.That(injectionResult, Is.EqualTo(-1));
     }
+
+    [Test]
+    public async Task Check_succesfull_csv_file_injection_async()
+    {
+        MySqlConnection? _connection = _databaseConnection;
+        ClassicAssert.NotNull(_connection);
+
+        DataInjector injector = new Injector();
+        int injectionResult = await injector.InjectDataAsync(_connection!);
+
+        Assert.That(injectionResult, Is.EqualTo(12));
+        TruncateAllTables(_connection!);
+    }
+
+    [Test]
+    public async Task Check_unsuccesfull_csv_file_injection_async()
+    {
+        MySqlConnection _connection = new MySqlConnection("");
+
+        DataInjector injector = new Injector();
+        int injectionResult = await injector.InjectDataAsync(_connection);
+
+        Assert.That(injectionResult, Is.EqualTo(-1));
+    }
 }

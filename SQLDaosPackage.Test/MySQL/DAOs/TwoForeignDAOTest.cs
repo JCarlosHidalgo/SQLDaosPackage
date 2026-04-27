@@ -303,7 +303,7 @@ public class TwoForeignDAOTest
                         Id = Guid.NewGuid(),
                         Name = "Tenant"
                     };
-        
+
         TenantDomain tenantDomain = new TenantDomain
                     {
                         UserId = user.Id,
@@ -319,6 +319,114 @@ public class TwoForeignDAOTest
         tenantDomainDao.Create(tenantDomain);
 
         bool deleted = tenantDomainDao.Delete(tenantDomain.UserId,tenantDomain.TenantId);
+        ClassicAssert.True(deleted);
+    }
+
+    [Test]
+    public async Task Check_succesfully_tenant_domain_creation_async()
+    {
+        TruncateAllTables(_databaseConnection!);
+
+        User user = new User
+                    {
+                        Id = Guid.NewGuid(),
+                        UserName = "UserName",
+                        Role = "Role"
+                    };
+
+        Tenant tenant = new Tenant
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = "Tenant"
+                    };
+
+        TenantDomain tenantDomain = new TenantDomain
+                    {
+                        UserId = user.Id,
+                        TenantId = tenant.Id
+                    };
+
+        UserBaseDAO userDao = new UserBaseDAO();
+        TenantBaseDAO tenantDao = new TenantBaseDAO();
+        TenantDomainDAO tenantDomainDao = new TenantDomainDAO();
+
+        await userDao.CreateAsync(user);
+        await tenantDao.CreateAsync(tenant);
+
+        int creationResult = await tenantDomainDao.CreateAsync(tenantDomain);
+
+        Assert.That(creationResult, Is.EqualTo(1));
+    }
+
+    [Test]
+    public async Task Check_read_operation_async()
+    {
+        TruncateAllTables(_databaseConnection!);
+
+        User user = new User
+                    {
+                        Id = Guid.NewGuid(),
+                        UserName = "UserName",
+                        Role = "Role"
+                    };
+
+        Tenant tenant = new Tenant
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = "Tenant"
+                    };
+
+        TenantDomain tenantDomain = new TenantDomain
+                    {
+                        UserId = user.Id,
+                        TenantId = tenant.Id
+                    };
+
+        UserBaseDAO userDao = new UserBaseDAO();
+        TenantBaseDAO tenantDao = new TenantBaseDAO();
+        TenantDomainDAO tenantDomainDao = new TenantDomainDAO();
+
+        await userDao.CreateAsync(user);
+        await tenantDao.CreateAsync(tenant);
+        await tenantDomainDao.CreateAsync(tenantDomain);
+
+        TenantDomain tenantDomainFromDB = (await tenantDomainDao.ReadAsync(user.Id, tenant.Id))!;
+
+        Assert.That(tenantDomain.UserId, Is.EqualTo(tenantDomainFromDB.UserId));
+    }
+
+    [Test]
+    public async Task Check_delete_operation_async()
+    {
+        TruncateAllTables(_databaseConnection!);
+        User user = new User
+                    {
+                        Id = Guid.NewGuid(),
+                        UserName = "UserName",
+                        Role = "Role"
+                    };
+
+        Tenant tenant = new Tenant
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = "Tenant"
+                    };
+
+        TenantDomain tenantDomain = new TenantDomain
+                    {
+                        UserId = user.Id,
+                        TenantId = tenant.Id
+                    };
+
+        UserBaseDAO userDao = new UserBaseDAO();
+        TenantBaseDAO tenantDao = new TenantBaseDAO();
+        TenantDomainDAO tenantDomainDao = new TenantDomainDAO();
+
+        await userDao.CreateAsync(user);
+        await tenantDao.CreateAsync(tenant);
+        await tenantDomainDao.CreateAsync(tenantDomain);
+
+        bool deleted = await tenantDomainDao.DeleteAsync(tenantDomain.UserId, tenantDomain.TenantId);
         ClassicAssert.True(deleted);
     }
 }

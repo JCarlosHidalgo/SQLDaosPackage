@@ -44,4 +44,33 @@ public abstract class MySQLSingleDAO<T> : MySQLBaseDAO<T>, ISingleDAO<T>
 
         return recordsAffected > 0;
     }
+
+    // Implementation to ReadAsync() method from ISingleDAO interface.
+    public async Task<T?> ReadAsync(Guid id)
+    {
+        T? entity = default(T);
+        _sb = new StringBuilder();
+        _sb.Append("SELECT * FROM ").Append(_tableName).Append(" WHERE Id = '").Append(id.ToString()).Append("';");
+        MySqlCommand com = GetCommandByText(_sb);
+        _mySqlReader = (MySqlDataReader)await com.ExecuteReaderAsync();
+        if (await _mySqlReader.ReadAsync())
+        {
+            entity = MapReaderToEntity();
+        }
+        await _mySqlReader.CloseAsync();
+        return entity;
+    }
+
+    // Implementation to DeleteAsync() method from ISingleDAO interface.
+    public async Task<bool> DeleteAsync(Guid id)
+    {
+        _sb = new StringBuilder();
+        _sb.Append("DELETE FROM ").Append(_tableName).Append(" WHERE Id = '").Append(id.ToString()).Append("';");
+        MySqlCommand com = GetCommandByText(_sb);
+        _mySqlReader = (MySqlDataReader)await com.ExecuteReaderAsync();
+        int recordsAffected = _mySqlReader.RecordsAffected;
+        await _mySqlReader.CloseAsync();
+
+        return recordsAffected > 0;
+    }
 }

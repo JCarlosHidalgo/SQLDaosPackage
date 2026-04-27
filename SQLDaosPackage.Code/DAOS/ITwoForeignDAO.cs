@@ -29,4 +29,10 @@ public interface ITwoForeignDAO<T> : IDAO<T>
         \return Boolean indicating if operation has effect over table.
      */
     bool Delete(Guid id1, Guid id2);
+
+    //! Asynchronous version of \c Read.
+    Task<T?> ReadAsync(Guid id1, Guid id2);
+
+    //! Asynchronous version of \c Delete.
+    Task<bool> DeleteAsync(Guid id1, Guid id2);
 }
