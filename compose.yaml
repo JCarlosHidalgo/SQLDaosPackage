@@ -19,6 +19,8 @@ services:
       dockerfile: Dockerfile
     volumes:
       - sql-daos-package-test-results:/test-env/SQLDaosPackage.Test/TestResults/
+    environment:
+      - MYSQL_CONNECTION_STRING=server=SQLDaosPackageMySQLHost;port=3306;uid=root;pwd=admin;database=SchemaTest;Allow User Variables=True
     command : bash -c "
         dotnet test -s ./.runsettings
         && dotnet reportgenerator -reports:"**/*.cobertura.xml" -targetdir:./TestResults
