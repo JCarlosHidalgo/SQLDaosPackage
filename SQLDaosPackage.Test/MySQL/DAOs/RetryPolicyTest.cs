@@ -1,9 +1,12 @@
+using System.Data;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
 using MySql.Data.MySqlClient;
 
 using SQLDaosPackage.DAOS.MySQL;
+
+using Test.MySQL.Utils;
 
 namespace Test.MySQL.DAOs;
 
@@ -145,5 +148,98 @@ public class RetryPolicyTest
             Assert.That(result, Is.EqualTo(code), $"failed for code {code}");
             Assert.That(attempts, Is.EqualTo(2), $"attempts mismatch for code {code}");
         }
+    }
+
+    [Test]
+    public async Task EnsureOpen_returns_when_connection_already_open()
+    {
+        MySqlConnection? conn = new MySQLConnectionUtils().GetConnection();
+        Assert.That(conn, Is.Not.Null, "test requires a live DB connection");
+        Assert.That(conn!.State, Is.EqualTo(ConnectionState.Open));
+
+        int attempts = 0;
+        int result = await MySQLRetryPolicy.ExecuteAsync<int>(conn, () =>
+        {
+            attempts++;
+            if (attempts == 1) throw TransientException(2006);
+            return Task.FromResult(11);
+        });
+
+        Assert.That(result, Is.EqualTo(11));
+        Assert.That(attempts, Is.EqualTo(2));
+        Assert.That(conn.State, Is.EqualTo(ConnectionState.Open));
+
+        conn.Dispose();
+    }
+
+    [Test]
+    public async Task EnsureOpen_reopens_closed_connection_between_attempts()
+    {
+        MySqlConnection? conn = new MySQLConnectionUtils().GetConnection();
+        Assert.That(conn, Is.Not.Null, "test requires a live DB connection");
+        await conn!.CloseAsync();
+        Assert.That(conn.State, Is.EqualTo(ConnectionState.Closed));
+
+        int attempts = 0;
+        int result = await MySQLRetryPolicy.ExecuteAsync<int>(conn, () =>
+        {
+            attempts++;
+            if (attempts == 1) throw TransientException(2006);
+            return Task.FromResult(99);
+        });
+
+        Assert.That(result, Is.EqualTo(99));
+        Assert.That(attempts, Is.EqualTo(2));
+        Assert.That(conn.State, Is.EqualTo(ConnectionState.Open));
+
+        conn.Dispose();
+    }
+
+    [Test]
+    public async Task EnsureOpen_swallows_MySqlException_from_OpenAsync()
+    {
+        MySqlConnection conn = new MySqlConnection(
+            "server=127.0.0.1;port=1;uid=invalid;pwd=invalid;database=none;Connection Timeout=1");
+
+        int attempts = 0;
+        int result = await MySQLRetryPolicy.ExecuteAsync<int>(conn, () =>
+        {
+            attempts++;
+            if (attempts == 1) throw TransientException(2006);
+            return Task.FromResult(7);
+        });
+
+        Assert.That(result, Is.EqualTo(7));
+        Assert.That(attempts, Is.EqualTo(2));
+
+        await conn.DisposeAsync();
+    }
+
+    [Test]
+    public async Task EnsureOpen_handles_broken_connection_state()
+    {
+        MySqlConnection? conn = new MySQLConnectionUtils().GetConnection();
+        Assert.That(conn, Is.Not.Null, "test requires a live DB connection");
+
+        FieldInfo? stateField =
+            typeof(MySqlConnection).GetField("connectionState",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.That(stateField, Is.Not.Null, "connectionState field not found on MySqlConnection");
+        stateField!.SetValue(conn, ConnectionState.Broken);
+        Assert.That(conn!.State, Is.EqualTo(ConnectionState.Broken));
+
+        int attempts = 0;
+        int result = await MySQLRetryPolicy.ExecuteAsync<int>(conn, () =>
+        {
+            attempts++;
+            if (attempts == 1) throw TransientException(2006);
+            return Task.FromResult(123);
+        });
+
+        Assert.That(result, Is.EqualTo(123));
+        Assert.That(attempts, Is.EqualTo(2));
+        Assert.That(conn.State, Is.EqualTo(ConnectionState.Open));
+
+        conn.Dispose();
     }
 }

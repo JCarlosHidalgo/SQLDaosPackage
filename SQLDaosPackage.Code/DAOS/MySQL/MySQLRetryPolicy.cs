@@ -41,9 +41,10 @@ public static class MySQLRetryPolicy
             {
                 return await operation();
             }
-            catch (MySqlException ex) when (transaction is null && IsTransient(ex) && attempt < MaxAttempts)
+            catch (MySqlException ex) when (transaction is null && IsTransient(ex))
             {
                 lastException = ex;
+                if (attempt == MaxAttempts) break;
                 await Task.Delay(delayMilliseconds);
                 delayMilliseconds *= 2;
                 await EnsureOpenAsync(connection);
