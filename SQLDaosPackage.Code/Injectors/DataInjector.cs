@@ -41,7 +41,7 @@ public class DataInjector : IDataInjector
 
         try
         {
-            injectionResult = await DAOS.MySQL.MySQLRetryPolicy.ExecuteAsync(connection, () =>
+            injectionResult = await Daos.MySQL.MySQLRetryPolicy.ExecuteAsync(connection, () =>
             {
                 MySqlCommand injectionCommand = new MySqlCommand(_injectionCommand, connection);
                 return injectionCommand.ExecuteNonQueryAsync();

@@ -3,20 +3,20 @@ using System.Data;
 
 using MySql.Data.MySqlClient;
 
-namespace SQLDaosPackage.DAOS.MySQL;
+namespace SQLDaosPackage.Daos.MySQL;
 
 /// <summary>
-/// This class implements concrete functionality from \c ISingleDAO interface.
+/// This class implements concrete functionality from \c ISingleDao interface.
 /// </summary>
  /*!
-    This DAO represents a MySQL table that does not have any foreign key relationships
+    This Dao represents a MySQL table that does not have any foreign key relationships
     with other ones, it also works with tables that only have one foreign key
     relationship.
     \param T Is the entity over this interface provides its methods.
   */
-public abstract class MySQLSingleDAO<T> : MySQLBaseDAO<T>, ISingleDAO<T>
+public abstract class MySQLSingleDao<T> : MySQLBaseDao<T>, ISingleDao<T>
 {
-    // Implementation to Read() method from ISingleDAO interface.
+    // Implementation to Read() method from ISingleDao interface.
     public T? Read(Guid id)
     {
         T? entity = default(T);
@@ -32,7 +32,7 @@ public abstract class MySQLSingleDAO<T> : MySQLBaseDAO<T>, ISingleDAO<T>
         return entity;
     }
 
-    // Implementation to Delete() method from ISingleDAO interface.
+    // Implementation to Delete() method from ISingleDao interface.
     public bool Delete(Guid id)
     {
         _sb = new StringBuilder();
@@ -45,7 +45,7 @@ public abstract class MySQLSingleDAO<T> : MySQLBaseDAO<T>, ISingleDAO<T>
         return recordsAffected > 0;
     }
 
-    // Implementation to ReadAsync() method from ISingleDAO interface.
+    // Implementation to ReadAsync() method from ISingleDao interface.
     public async Task<T?> ReadAsync(Guid id)
     {
         _sb = new StringBuilder();
@@ -64,7 +64,7 @@ public abstract class MySQLSingleDAO<T> : MySQLBaseDAO<T>, ISingleDAO<T>
         });
     }
 
-    // Implementation to DeleteAsync() method from ISingleDAO interface.
+    // Implementation to DeleteAsync() method from ISingleDao interface.
     public async Task<bool> DeleteAsync(Guid id)
     {
         _sb = new StringBuilder();

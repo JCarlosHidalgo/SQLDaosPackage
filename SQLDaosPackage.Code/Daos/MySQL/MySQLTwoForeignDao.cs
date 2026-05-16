@@ -3,9 +3,9 @@ using System.Data;
 
 using MySql.Data.MySqlClient;
 
-namespace SQLDaosPackage.DAOS.MySQL;
+namespace SQLDaosPackage.Daos.MySQL;
 
-public abstract class MySQLTwoForeignDAO<T> : MySQLBaseDAO<T>, ITwoForeignDAO<T>
+public abstract class MySQLTwoForeignDao<T> : MySQLBaseDao<T>, ITwoForeignDao<T>
 {
     //! String to identify first table's indentifier.
      /*!
@@ -19,7 +19,7 @@ public abstract class MySQLTwoForeignDAO<T> : MySQLBaseDAO<T>, ITwoForeignDAO<T>
      */
     protected internal string _secondForeignKey = string.Empty;
 
-    // Implementation to Read() method from ITwoForeignDAO interface.
+    // Implementation to Read() method from ITwoForeignDao interface.
     public T? Read(Guid id1, Guid id2)
     {
         T? entity = default(T);
@@ -36,7 +36,7 @@ public abstract class MySQLTwoForeignDAO<T> : MySQLBaseDAO<T>, ITwoForeignDAO<T>
         return entity;
     }
 
-    // Implementation to Delete() method from ITwoForeignDAO interface.
+    // Implementation to Delete() method from ITwoForeignDao interface.
     public bool Delete(Guid id1, Guid id2)
     {
         _sb = new StringBuilder();
@@ -50,7 +50,7 @@ public abstract class MySQLTwoForeignDAO<T> : MySQLBaseDAO<T>, ITwoForeignDAO<T>
         return recordsAffected > 0;
     }
 
-    // Implementation to ReadAsync() method from ITwoForeignDAO interface.
+    // Implementation to ReadAsync() method from ITwoForeignDao interface.
     public async Task<T?> ReadAsync(Guid id1, Guid id2)
     {
         _sb = new StringBuilder();
@@ -70,7 +70,7 @@ public abstract class MySQLTwoForeignDAO<T> : MySQLBaseDAO<T>, ITwoForeignDAO<T>
         });
     }
 
-    // Implementation to DeleteAsync() method from ITwoForeignDAO interface.
+    // Implementation to DeleteAsync() method from ITwoForeignDao interface.
     public async Task<bool> DeleteAsync(Guid id1, Guid id2)
     {
         _sb = new StringBuilder();

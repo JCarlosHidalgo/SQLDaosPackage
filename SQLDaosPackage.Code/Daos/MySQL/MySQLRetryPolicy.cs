@@ -2,7 +2,7 @@ using System.Data;
 
 using MySql.Data.MySqlClient;
 
-namespace SQLDaosPackage.DAOS.MySQL;
+namespace SQLDaosPackage.Daos.MySQL;
 
 /// <summary>
 /// Static helper that retries MySQL operations on transient failures

@@ -1,19 +1,19 @@
-namespace SQLDaosPackage.DAOS;
+namespace SQLDaosPackage.Daos;
 
 /// <summary>
-/// Defines behaviour that any other DAO type must have.
+/// Defines behaviour that any other Dao type must have.
 /// </summary>
  /*!
-      This project structures DAOs according to the way a table depends on others 
+      This project structures Daos according to the way a table depends on others 
       through its foreign key relationships:\n
-      Depending on the number of relationships, the DAO will inherit from a different 
-      interface, but all DAOs interfaces will inherit from \c IDAO.\n
+      Depending on the number of relationships, the Dao will inherit from a different 
+      interface, but all Daos interfaces will inherit from \c IDao.\n
       Also, to manage convention to inherited interfaces, all MySQL tables that
       have a primary key used to identification purposes must have \c Id as the 
       identificator column's name.
       \param T Is the entity over this interface provides its methods.
   */
-public interface IDAO<T>
+public interface IDao<T>
 {
     //! Creates a new entity.
      /*!

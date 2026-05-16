@@ -1,15 +1,15 @@
-namespace SQLDaosPackage.DAOS;
+namespace SQLDaosPackage.Daos;
 
 /// <summary>
 /// Defines behaviour that an independent entity must have.
 /// </summary>
  /*!
-    This DAO represents a MySQL table that does not have any foreign key relationships
+    This Dao represents a MySQL table that does not have any foreign key relationships
     with other ones, it also works with tables that only have one foreign key
     relationship.
     \param T Is the entity over this interface provides its methods.
   */
-public interface ISingleDAO<T> : IDAO<T>
+public interface ISingleDao<T> : IDao<T>
 {
     //! Obtains an entity based on a Guid.
      /*!

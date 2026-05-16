@@ -4,11 +4,11 @@ using System.Runtime.CompilerServices;
 
 using MySql.Data.MySqlClient;
 
-using SQLDaosPackage.DAOS.MySQL;
+using SQLDaosPackage.Daos.MySQL;
 
 using Test.MySQL.Utils;
 
-namespace Test.MySQL.DAOs;
+namespace Test.MySQL.Daos;
 
 [TestFixture]
 public class RetryPolicyTest

@@ -1,16 +1,16 @@
-namespace SQLDaosPackage.DAOS;
+namespace SQLDaosPackage.Daos;
 
 /// <summary>
 /// Defines behaviour that an entity with two dependencies must have.
 /// </summary>
  /*!
-    This DAO represents a MySQL table that has two foreign key relationships with
+    This Dao represents a MySQL table that has two foreign key relationships with
     another tables, it is important to mention that the table must not have own
-    identifier (for that purpose \c ISingleDAO is used) and it is a many-to-many 
+    identifier (for that purpose \c ISingleDao is used) and it is a many-to-many 
     relation table.
     \param T Is the entity over this interface provides its methods.
   */
-public interface ITwoForeignDAO<T> : IDAO<T>
+public interface ITwoForeignDao<T> : IDao<T>
 {
     //! Obtains an entity based on two Guids.
      /*!

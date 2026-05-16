@@ -3,15 +3,15 @@ using System.Data;
 
 using MySql.Data.MySqlClient;
 
-namespace SQLDaosPackage.DAOS.MySQL;
+namespace SQLDaosPackage.Daos.MySQL;
 
 /// <summary>
-/// Refactor common behaviour of MySQL DAOs.
+/// Refactor common behaviour of MySQL Daos.
 /// </summary>
  /*!
-    This class implements the basic setup that any other MySQL DAO must have.
+    This class implements the basic setup that any other MySQL Dao must have.
   */
-public abstract class MySQLBaseDAO<T> : IDAO<T>
+public abstract class MySQLBaseDao<T> : IDao<T>
 {
     //! MySQL connection to determine database host.
      /*!
@@ -104,7 +104,7 @@ public abstract class MySQLBaseDAO<T> : IDAO<T>
      */
     protected internal abstract StringBuilder UpdateCommandIntoStringBuilder(T entity);
 
-    // Implementation to Create() method from IDAO interface.
+    // Implementation to Create() method from IDao interface.
     public int Create(T entity)
     {
         int creationResult = 0;
@@ -121,7 +121,7 @@ public abstract class MySQLBaseDAO<T> : IDAO<T>
         return creationResult;
     }
 
-    // Implementation to ReadAll() method from IDAO interface.
+    // Implementation to ReadAll() method from IDao interface.
     public List<T> ReadAll()
     {
         _dbCommand = new MySqlCommand();
@@ -132,7 +132,7 @@ public abstract class MySQLBaseDAO<T> : IDAO<T>
         return MapReaderToEntitiesList();
     }
 
-    // Implementation to Update() method from IDAO interface.
+    // Implementation to Update() method from IDao interface.
     public int Update(T entity)
     {
         _sb = UpdateCommandIntoStringBuilder(entity);
@@ -142,7 +142,7 @@ public abstract class MySQLBaseDAO<T> : IDAO<T>
         return toReturn;
     }
 
-    // Implementation to CreateAsync() method from IDAO interface.
+    // Implementation to CreateAsync() method from IDao interface.
     public async Task<int> CreateAsync(T entity)
     {
         int creationResult = 0;
@@ -161,7 +161,7 @@ public abstract class MySQLBaseDAO<T> : IDAO<T>
         return creationResult;
     }
 
-    // Implementation to ReadAllAsync() method from IDAO interface.
+    // Implementation to ReadAllAsync() method from IDao interface.
     public async Task<List<T>> ReadAllAsync()
     {
         return await MySQLRetryPolicy.ExecuteAsync(_connection, async () =>
@@ -175,7 +175,7 @@ public abstract class MySQLBaseDAO<T> : IDAO<T>
         });
     }
 
-    // Implementation to UpdateAsync() method from IDAO interface.
+    // Implementation to UpdateAsync() method from IDao interface.
     public async Task<int> UpdateAsync(T entity)
     {
         _sb = UpdateCommandIntoStringBuilder(entity);
@@ -188,7 +188,7 @@ public abstract class MySQLBaseDAO<T> : IDAO<T>
         });
     }
 
-    //! \c MySqlCommand function to setup a DAO command.
+    //! \c MySqlCommand function to setup a Dao command.
      /*!
         /return A command prepared to be used in another functions.
      */

@@ -5,15 +5,15 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackageId>JuanCarlosHS.SQLDaosPackage</PackageId>
-    <Version>1.1.1</Version>
+    <Version>1.2.0</Version>
     <Author>Juan Carlos Hidalgo Sosa</Author>
     <Authors>Juan Carlos Hidalgo Sosa</Authors>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Product>SqlDAOSPackage</Product>
+    <Product>SqlDaosPackage</Product>
     <RepositoryUrl>https://github.com/JCarlosHidalgo/SQLDaosPackage</RepositoryUrl>
     <Copyright>CC BY-SA 4.0, 2025</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageTags>MySQL,DAO,Database</PackageTags>
+    <PackageTags>MySQL,Dao,Database</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

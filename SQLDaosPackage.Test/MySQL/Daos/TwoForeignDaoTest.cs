@@ -1,6 +1,6 @@
 using NUnit.Framework.Legacy;
 
-using SQLDaosPackage.DAOS.MySQL;
+using SQLDaosPackage.Daos.MySQL;
 
 using System.Data;
 using System.Text;
@@ -12,10 +12,10 @@ using Test.MySQL.Entities.Single;
 using Test.MySQL.Entities.TwoForeign;
 using Test.MySQL.Utils;
 
-namespace Test.MySQL.DAOs;
+namespace Test.MySQL.Daos;
 
 [TestFixture]
-public class TwoForeignDAOTest
+public class TwoForeignDaoTest
 {
     public static MySqlConnection? _databaseConnection;
 
@@ -39,9 +39,9 @@ public class TwoForeignDAOTest
         com.ExecuteNonQuery();
     }
 
-    class UserBaseDAO : MySQLSingleDAO <User> 
+    class UserBaseDao : MySQLSingleDao <User> 
     {
-        public UserBaseDAO()
+        public UserBaseDao()
         {
             _connection = _databaseConnection!;
             _tableName = "User";
@@ -96,9 +96,9 @@ public class TwoForeignDAOTest
         }
     }
 
-    class TenantBaseDAO : MySQLSingleDAO <Tenant> 
+    class TenantBaseDao : MySQLSingleDao <Tenant> 
     {
-        public TenantBaseDAO()
+        public TenantBaseDao()
         {
             _connection = _databaseConnection!;
             _tableName = "Tenant";
@@ -141,9 +141,9 @@ public class TwoForeignDAOTest
         }
     }
 
-    class TenantDomainDAO : MySQLTwoForeignDAO <TenantDomain> 
+    class TenantDomainDao : MySQLTwoForeignDao <TenantDomain> 
     {
-        public TenantDomainDAO()
+        public TenantDomainDao()
         {
             _connection = _databaseConnection!;
             _tableName = "TenantDomain";
@@ -201,14 +201,14 @@ public class TwoForeignDAOTest
     [Test]
     public void Check_dao_table_name()
     {
-        TenantDomainDAO dao = new TenantDomainDAO();
+        TenantDomainDao dao = new TenantDomainDao();
         Assert.That(dao.GetTableName(), Is.EqualTo("TenantDomain"));
     }
 
     [Test]
     public void Check_dao_foreign_keys_names()
     {
-        TenantDomainDAO dao = new TenantDomainDAO();
+        TenantDomainDao dao = new TenantDomainDao();
         Assert.That(dao.GetFirstForeignKeyName(), Is.EqualTo("UserId"));
         Assert.That(dao.GetSecondForeignKeyName(), Is.EqualTo("TenantId"));
     }
@@ -237,9 +237,9 @@ public class TwoForeignDAOTest
                         TenantId = tenant.Id
                     };
 
-        UserBaseDAO userDao = new UserBaseDAO();
-        TenantBaseDAO tenantDao = new TenantBaseDAO();
-        TenantDomainDAO tenantDomainDao = new TenantDomainDAO();
+        UserBaseDao userDao = new UserBaseDao();
+        TenantBaseDao tenantDao = new TenantBaseDao();
+        TenantDomainDao tenantDomainDao = new TenantDomainDao();
 
         userDao.Create(user);
         tenantDao.Create(tenant);
@@ -274,9 +274,9 @@ public class TwoForeignDAOTest
                         TenantId = tenant.Id
                     };
 
-        UserBaseDAO userDao = new UserBaseDAO();
-        TenantBaseDAO tenantDao = new TenantBaseDAO();
-        TenantDomainDAO tenantDomainDao = new TenantDomainDAO();
+        UserBaseDao userDao = new UserBaseDao();
+        TenantBaseDao tenantDao = new TenantBaseDao();
+        TenantDomainDao tenantDomainDao = new TenantDomainDao();
 
         userDao.Create(user);
         tenantDao.Create(tenant);
@@ -310,9 +310,9 @@ public class TwoForeignDAOTest
                         TenantId = tenant.Id
                     };
 
-        UserBaseDAO userDao = new UserBaseDAO();
-        TenantBaseDAO tenantDao = new TenantBaseDAO();
-        TenantDomainDAO tenantDomainDao = new TenantDomainDAO();
+        UserBaseDao userDao = new UserBaseDao();
+        TenantBaseDao tenantDao = new TenantBaseDao();
+        TenantDomainDao tenantDomainDao = new TenantDomainDao();
 
         userDao.Create(user);
         tenantDao.Create(tenant);
@@ -346,9 +346,9 @@ public class TwoForeignDAOTest
                         TenantId = tenant.Id
                     };
 
-        UserBaseDAO userDao = new UserBaseDAO();
-        TenantBaseDAO tenantDao = new TenantBaseDAO();
-        TenantDomainDAO tenantDomainDao = new TenantDomainDAO();
+        UserBaseDao userDao = new UserBaseDao();
+        TenantBaseDao tenantDao = new TenantBaseDao();
+        TenantDomainDao tenantDomainDao = new TenantDomainDao();
 
         await userDao.CreateAsync(user);
         await tenantDao.CreateAsync(tenant);
@@ -382,9 +382,9 @@ public class TwoForeignDAOTest
                         TenantId = tenant.Id
                     };
 
-        UserBaseDAO userDao = new UserBaseDAO();
-        TenantBaseDAO tenantDao = new TenantBaseDAO();
-        TenantDomainDAO tenantDomainDao = new TenantDomainDAO();
+        UserBaseDao userDao = new UserBaseDao();
+        TenantBaseDao tenantDao = new TenantBaseDao();
+        TenantDomainDao tenantDomainDao = new TenantDomainDao();
 
         await userDao.CreateAsync(user);
         await tenantDao.CreateAsync(tenant);
@@ -418,9 +418,9 @@ public class TwoForeignDAOTest
                         TenantId = tenant.Id
                     };
 
-        UserBaseDAO userDao = new UserBaseDAO();
-        TenantBaseDAO tenantDao = new TenantBaseDAO();
-        TenantDomainDAO tenantDomainDao = new TenantDomainDAO();
+        UserBaseDao userDao = new UserBaseDao();
+        TenantBaseDao tenantDao = new TenantBaseDao();
+        TenantDomainDao tenantDomainDao = new TenantDomainDao();
 
         await userDao.CreateAsync(user);
         await tenantDao.CreateAsync(tenant);

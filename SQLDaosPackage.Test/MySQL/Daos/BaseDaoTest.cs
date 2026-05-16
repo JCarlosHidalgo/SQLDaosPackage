@@ -1,6 +1,6 @@
 using NUnit.Framework.Legacy;
 
-using SQLDaosPackage.DAOS.MySQL;
+using SQLDaosPackage.Daos.MySQL;
 
 using System.Data;
 using System.Text;
@@ -11,10 +11,10 @@ using MySql.Data.MySqlClient;
 using Test.MySQL.Entities.Single;
 using Test.MySQL.Utils;
 
-namespace Test.MySQL.DAOs;
+namespace Test.MySQL.Daos;
 
 [TestFixture]
-public class BaseDAOTest
+public class BaseDaoTest
 {
     public static MySqlConnection? _databaseConnection;
 
@@ -38,9 +38,9 @@ public class BaseDAOTest
         com.ExecuteNonQuery();
     }
 
-    class UserBaseDAO : MySQLSingleDAO <User> 
+    class UserBaseDao : MySQLSingleDao <User> 
     {
-        public UserBaseDAO()
+        public UserBaseDao()
         {
             _connection = _databaseConnection!;
             _tableName = "User";
@@ -116,7 +116,7 @@ public class BaseDAOTest
     [Test]
     public void Check_dao_table_name()
     {
-        UserBaseDAO dao = new UserBaseDAO();
+        UserBaseDao dao = new UserBaseDao();
         Assert.That(dao.GetTableName(), Is.EqualTo("User"));
     }
 
@@ -124,7 +124,7 @@ public class BaseDAOTest
     public void Check_succesfully_user_creation()
     {
         TruncateAllTables(_databaseConnection!);
-        UserBaseDAO dao = new UserBaseDAO();
+        UserBaseDao dao = new UserBaseDao();
         User user = new User
                     {
                         Id = Guid.NewGuid(),
@@ -141,7 +141,7 @@ public class BaseDAOTest
     public void Check_duplicated_user_creation()
     {
         TruncateAllTables(_databaseConnection!);
-        UserBaseDAO dao = new UserBaseDAO();
+        UserBaseDao dao = new UserBaseDao();
         User user = new User
                     {
                         Id = Guid.NewGuid(),
@@ -160,7 +160,7 @@ public class BaseDAOTest
     public void Check_read_all_operation()
     {
         TruncateAllTables(_databaseConnection!);
-        UserBaseDAO dao = new UserBaseDAO();
+        UserBaseDao dao = new UserBaseDao();
         List<User> users = new List<User>{
             new User()
             {
@@ -196,7 +196,7 @@ public class BaseDAOTest
     public void Check_stored_procedure_operation()
     {
         TruncateAllTables(_databaseConnection!);
-        UserBaseDAO dao = new UserBaseDAO();
+        UserBaseDao dao = new UserBaseDao();
         dao.Create(new User()
             {
                 Id = Guid.NewGuid(),
@@ -218,7 +218,7 @@ public class BaseDAOTest
     public void Check_update_operation()
     {
         TruncateAllTables(_databaseConnection!);
-        UserBaseDAO dao = new UserBaseDAO();
+        UserBaseDao dao = new UserBaseDao();
         Guid guid = Guid.NewGuid();
         User user = new User()
             {
@@ -240,7 +240,7 @@ public class BaseDAOTest
     public void Check_delete_operation()
     {
         TruncateAllTables(_databaseConnection!);
-        UserBaseDAO dao = new UserBaseDAO();
+        UserBaseDao dao = new UserBaseDao();
         User user = new User()
             {
                 Id = Guid.NewGuid(),
@@ -256,7 +256,7 @@ public class BaseDAOTest
     public async Task Check_succesfully_user_creation_async()
     {
         TruncateAllTables(_databaseConnection!);
-        UserBaseDAO dao = new UserBaseDAO();
+        UserBaseDao dao = new UserBaseDao();
         User user = new User
                     {
                         Id = Guid.NewGuid(),
@@ -273,7 +273,7 @@ public class BaseDAOTest
     public async Task Check_duplicated_user_creation_async()
     {
         TruncateAllTables(_databaseConnection!);
-        UserBaseDAO dao = new UserBaseDAO();
+        UserBaseDao dao = new UserBaseDao();
         User user = new User
                     {
                         Id = Guid.NewGuid(),
@@ -292,7 +292,7 @@ public class BaseDAOTest
     public async Task Check_read_all_operation_async()
     {
         TruncateAllTables(_databaseConnection!);
-        UserBaseDAO dao = new UserBaseDAO();
+        UserBaseDao dao = new UserBaseDao();
         List<User> users = new List<User>{
             new User()
             {
@@ -328,7 +328,7 @@ public class BaseDAOTest
     public async Task Check_update_operation_async()
     {
         TruncateAllTables(_databaseConnection!);
-        UserBaseDAO dao = new UserBaseDAO();
+        UserBaseDao dao = new UserBaseDao();
         Guid guid = Guid.NewGuid();
         User user = new User()
             {
@@ -350,7 +350,7 @@ public class BaseDAOTest
     public async Task Check_delete_operation_async()
     {
         TruncateAllTables(_databaseConnection!);
-        UserBaseDAO dao = new UserBaseDAO();
+        UserBaseDao dao = new UserBaseDao();
         User user = new User()
             {
                 Id = Guid.NewGuid(),
