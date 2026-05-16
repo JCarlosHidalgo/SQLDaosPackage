@@ -22,6 +22,7 @@ public abstract class MySQLTwoForeignDao<T> : MySQLBaseDao<T>, ITwoForeignDao<T>
     // Implementation to Read() method from ITwoForeignDao interface.
     public T? Read(Guid id1, Guid id2)
     {
+        MySQLRetryPolicy.EnsureOpen(_connection);
         T? entity = default(T);
         _sb = new StringBuilder();
         _sb.Append("SELECT * FROM ").Append(_tableName)
@@ -39,6 +40,7 @@ public abstract class MySQLTwoForeignDao<T> : MySQLBaseDao<T>, ITwoForeignDao<T>
     // Implementation to Delete() method from ITwoForeignDao interface.
     public bool Delete(Guid id1, Guid id2)
     {
+        MySQLRetryPolicy.EnsureOpen(_connection);
         _sb = new StringBuilder();
         _sb.Append("DELETE FROM ").Append(_tableName)
             .Append(" WHERE ").Append(_firstForeignKey).Append(" = '").Append(id1.ToString()).Append("' ")

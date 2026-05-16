@@ -19,6 +19,7 @@ public abstract class MySQLSingleDao<T> : MySQLBaseDao<T>, ISingleDao<T>
     // Implementation to Read() method from ISingleDao interface.
     public T? Read(Guid id)
     {
+        MySQLRetryPolicy.EnsureOpen(_connection);
         T? entity = default(T);
         _sb = new StringBuilder();
         _sb.Append("SELECT * FROM ").Append(_tableName).Append(" WHERE Id = '").Append(id.ToString()).Append("';");
@@ -35,6 +36,7 @@ public abstract class MySQLSingleDao<T> : MySQLBaseDao<T>, ISingleDao<T>
     // Implementation to Delete() method from ISingleDao interface.
     public bool Delete(Guid id)
     {
+        MySQLRetryPolicy.EnsureOpen(_connection);
         _sb = new StringBuilder();
         _sb.Append("DELETE FROM ").Append(_tableName).Append(" WHERE Id = '").Append(id.ToString()).Append("';");
         MySqlCommand com = GetCommandByText(_sb);

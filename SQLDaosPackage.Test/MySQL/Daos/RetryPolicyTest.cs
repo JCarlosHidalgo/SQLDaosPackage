@@ -242,4 +242,67 @@ public class RetryPolicyTest
 
         conn.Dispose();
     }
+
+    [Test]
+    public void EnsureOpen_sync_is_noop_on_null_connection()
+    {
+        Assert.DoesNotThrow(() => MySQLRetryPolicy.EnsureOpen(null));
+    }
+
+    [Test]
+    public void EnsureOpen_sync_opens_closed_connection()
+    {
+        MySqlConnection? conn = new MySQLConnectionUtils().GetConnection();
+        Assert.That(conn, Is.Not.Null, "test requires a live DB connection");
+        conn!.Close();
+        Assert.That(conn.State, Is.EqualTo(ConnectionState.Closed));
+
+        MySQLRetryPolicy.EnsureOpen(conn);
+
+        Assert.That(conn.State, Is.EqualTo(ConnectionState.Open));
+        conn.Dispose();
+    }
+
+    [Test]
+    public void EnsureOpen_sync_is_noop_when_already_open()
+    {
+        MySqlConnection? conn = new MySQLConnectionUtils().GetConnection();
+        Assert.That(conn, Is.Not.Null, "test requires a live DB connection");
+        Assert.That(conn!.State, Is.EqualTo(ConnectionState.Open));
+
+        MySQLRetryPolicy.EnsureOpen(conn);
+
+        Assert.That(conn.State, Is.EqualTo(ConnectionState.Open));
+        conn.Dispose();
+    }
+
+    [Test]
+    public void EnsureOpen_sync_swallows_MySqlException_from_Open()
+    {
+        MySqlConnection conn = new MySqlConnection(
+            "server=127.0.0.1;port=1;uid=invalid;pwd=invalid;database=none;Connection Timeout=1");
+
+        Assert.DoesNotThrow(() => MySQLRetryPolicy.EnsureOpen(conn));
+
+        conn.Dispose();
+    }
+
+    [Test]
+    public void EnsureOpen_sync_handles_broken_connection_state()
+    {
+        MySqlConnection? conn = new MySQLConnectionUtils().GetConnection();
+        Assert.That(conn, Is.Not.Null, "test requires a live DB connection");
+
+        FieldInfo? stateField =
+            typeof(MySqlConnection).GetField("connectionState",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.That(stateField, Is.Not.Null, "connectionState field not found on MySqlConnection");
+        stateField!.SetValue(conn, ConnectionState.Broken);
+        Assert.That(conn!.State, Is.EqualTo(ConnectionState.Broken));
+
+        MySQLRetryPolicy.EnsureOpen(conn);
+
+        Assert.That(conn.State, Is.EqualTo(ConnectionState.Open));
+        conn.Dispose();
+    }
 }

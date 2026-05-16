@@ -35,6 +35,8 @@ public static class MySQLRetryPolicy
         int delayMilliseconds = InitialDelayMilliseconds;
         MySqlException? lastException = null;
 
+        await EnsureOpenAsync(connection);
+
         for (int attempt = 1; attempt <= MaxAttempts; attempt++)
         {
             try
@@ -68,7 +70,13 @@ public static class MySQLRetryPolicy
     private static bool IsTransient(MySqlException exception) =>
         TransientErrorNumbers.Contains(exception.Number);
 
-    private static async Task EnsureOpenAsync(MySqlConnection? connection)
+    /// <summary>
+    /// Opens <paramref name="connection"/> if it is not already <c>Open</c>; closes a
+    /// <c>Broken</c> connection first. Swallows <see cref="MySqlException"/> so callers
+    /// observe the original operation error instead of an EnsureOpen failure.
+    /// Safe to call repeatedly: a no-op when the connection is already open.
+    /// </summary>
+    public static async Task EnsureOpenAsync(MySqlConnection? connection)
     {
         if (connection is null) return;
         if (connection.State == ConnectionState.Open) return;
@@ -80,6 +88,30 @@ public static class MySQLRetryPolicy
                 await connection.CloseAsync();
             }
             await connection.OpenAsync();
+        }
+        catch (MySqlException)
+        {
+        }
+    }
+
+    /// <summary>
+    /// Synchronous counterpart of <see cref="EnsureOpenAsync"/>. Sync DAO methods call
+    /// this so consumers can register <c>MySqlConnection</c> without eager-open and
+    /// still use the sync surface of <see cref="MySQLBaseDao{T}"/>/<see cref="MySQLSingleDao{T}"/>
+    /// /<see cref="MySQLTwoForeignDao{T}"/>.
+    /// </summary>
+    public static void EnsureOpen(MySqlConnection? connection)
+    {
+        if (connection is null) return;
+        if (connection.State == ConnectionState.Open) return;
+
+        try
+        {
+            if (connection.State == ConnectionState.Broken)
+            {
+                connection.Close();
+            }
+            connection.Open();
         }
         catch (MySqlException)
         {

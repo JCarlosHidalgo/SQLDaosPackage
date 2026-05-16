@@ -107,6 +107,7 @@ public abstract class MySQLBaseDao<T> : IDao<T>
     // Implementation to Create() method from IDao interface.
     public int Create(T entity)
     {
+        MySQLRetryPolicy.EnsureOpen(_connection);
         int creationResult = 0;
         _sb = CreateCommandIntoStringBuilder(entity);
         try
@@ -124,6 +125,7 @@ public abstract class MySQLBaseDao<T> : IDao<T>
     // Implementation to ReadAll() method from IDao interface.
     public List<T> ReadAll()
     {
+        MySQLRetryPolicy.EnsureOpen(_connection);
         _dbCommand = new MySqlCommand();
         _dbCommand.Connection = _connection;
         _dbCommand.CommandText = _tableName;
@@ -135,6 +137,7 @@ public abstract class MySQLBaseDao<T> : IDao<T>
     // Implementation to Update() method from IDao interface.
     public int Update(T entity)
     {
+        MySQLRetryPolicy.EnsureOpen(_connection);
         _sb = UpdateCommandIntoStringBuilder(entity);
         _mySqlReader = GetCommandByText(_sb).ExecuteReader();
         int toReturn = _mySqlReader.RecordsAffected;
