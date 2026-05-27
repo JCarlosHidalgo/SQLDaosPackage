@@ -1,15 +1,19 @@
 services:
 
-  # APACHE-TO-DISPLAY-TEST-RESULTS
+  # APACHE-TO-DISPLAY-TEST-RESULTS-AND-DOCS
   apache:
     container_name: SQLDaosPackageApache
     image: httpd:2.4.65-alpine
     ports:
-      - "8000:80"
+      - "5000:80"
     volumes:
-      - sql-daos-package-test-results:/usr/local/apache2/htdocs/
+      - sql-daos-package-test-results:/usr/local/apache2/htdocs/test/
+      - package-docs-html:/usr/local/apache2/htdocs/docs/
+      - ./index.html:/usr/local/apache2/htdocs/index.html:ro
     depends_on:
       package-test:
+        condition: service_completed_successfully
+      doc-build:
         condition: service_completed_successfully
 
   # TESTING-PACKAGE
@@ -27,7 +31,7 @@ services:
       "
     depends_on:
       database-for-testing:
-        condition: service_healthy    
+        condition: service_healthy
 
   # MYSQL-HOST-FOR-TESTING
   database-for-testing:
@@ -46,5 +50,14 @@ services:
       interval: 2s
       retries: 60
 
+  # BUILD-PACKAGE-DOCS
+  doc-build:
+    container_name: DocsBuilder
+    build:
+      dockerfile: ./SQLDaosPackage.Code/Dockerfile.docs
+    volumes:
+      - package-docs-html:/work/Documentation/
+
 volumes:
   sql-daos-package-test-results:
+  package-docs-html:
