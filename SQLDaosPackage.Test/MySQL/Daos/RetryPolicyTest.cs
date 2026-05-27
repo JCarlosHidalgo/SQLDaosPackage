@@ -47,7 +47,11 @@ public class RetryPolicyTest
         int result = await MySQLRetryPolicy.ExecuteAsync<int>(connection: null, () =>
         {
             attempts++;
-            if (attempts == 1) throw TransientException(2006);
+            if (attempts == 1)
+            {
+                throw TransientException(2006);
+            }
+
             return Task.FromResult(7);
         });
 
@@ -123,7 +127,11 @@ public class RetryPolicyTest
         await MySQLRetryPolicy.ExecuteAsync(connection: null, () =>
         {
             attempts++;
-            if (attempts == 1) throw TransientException(1205);
+            if (attempts == 1)
+            {
+                throw TransientException(1205);
+            }
+
             return Task.CompletedTask;
         });
 
@@ -141,7 +149,11 @@ public class RetryPolicyTest
             int result = await MySQLRetryPolicy.ExecuteAsync<int>(connection: null, () =>
             {
                 attempts++;
-                if (attempts == 1) throw TransientException(code);
+                if (attempts == 1)
+                {
+                    throw TransientException(code);
+                }
+
                 return Task.FromResult(code);
             });
 
@@ -161,7 +173,11 @@ public class RetryPolicyTest
         int result = await MySQLRetryPolicy.ExecuteAsync<int>(conn, () =>
         {
             attempts++;
-            if (attempts == 1) throw TransientException(2006);
+            if (attempts == 1)
+            {
+                throw TransientException(2006);
+            }
+
             return Task.FromResult(11);
         });
 
@@ -184,7 +200,11 @@ public class RetryPolicyTest
         int result = await MySQLRetryPolicy.ExecuteAsync<int>(conn, () =>
         {
             attempts++;
-            if (attempts == 1) throw TransientException(2006);
+            if (attempts == 1)
+            {
+                throw TransientException(2006);
+            }
+
             return Task.FromResult(99);
         });
 
@@ -205,7 +225,11 @@ public class RetryPolicyTest
         int result = await MySQLRetryPolicy.ExecuteAsync<int>(conn, () =>
         {
             attempts++;
-            if (attempts == 1) throw TransientException(2006);
+            if (attempts == 1)
+            {
+                throw TransientException(2006);
+            }
+
             return Task.FromResult(7);
         });
 
@@ -232,7 +256,11 @@ public class RetryPolicyTest
         int result = await MySQLRetryPolicy.ExecuteAsync<int>(conn, () =>
         {
             attempts++;
-            if (attempts == 1) throw TransientException(2006);
+            if (attempts == 1)
+            {
+                throw TransientException(2006);
+            }
+
             return Task.FromResult(123);
         });
 

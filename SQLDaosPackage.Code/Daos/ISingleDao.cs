@@ -12,19 +12,19 @@ namespace SQLDaosPackage.Daos;
 public interface ISingleDao<T> : IDao<T>
 {
     //! Obtains an entity based on a Guid.
-     /*!
-        This method returns a possibly-null \c T type, null case occurs when there is
-        no entity on table which Id matches with \c id parameter.
-        \param id Is the identifier used to apply the matching process.
-        \return Possibly-null entity of \c T type.
-     */
+    /*!
+       This method returns a possibly-null \c T type, null case occurs when there is
+       no entity on table which Id matches with \c id parameter.
+       \param id Is the identifier used to apply the matching process.
+       \return Possibly-null entity of \c T type.
+    */
     T? Read(Guid id);
 
     //! Deletes an entity based on Guid identifier.
-     /*!
-        \param id Is the identifier used to apply the matching process.
-        \return Boolean indicating if operation has effect over table.
-     */
+    /*!
+       \param id Is the identifier used to apply the matching process.
+       \return Boolean indicating if operation has effect over table.
+    */
     bool Delete(Guid id);
 
     //! Asynchronous version of \c Read.

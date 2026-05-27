@@ -5,7 +5,7 @@ services:
     container_name: SQLDaosPackageDocsApache
     image: httpd:2.4.65-alpine
     ports:
-      - "8888:80"
+      - "8001:80"
     volumes:
       - package-docs-html:/usr/local/apache2/htdocs/package/
     depends_on:
@@ -18,9 +18,6 @@ services:
     build:
       dockerfile: ./SQLDaosPackage.Code/Dockerfile.docs
     volumes:
-      - package-docs-html:/docs/Documentation/
-    command : bash -c "
-        doxygen
-      "
+      - package-docs-html:/work/Documentation/
 volumes:
   package-docs-html:

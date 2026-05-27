@@ -1,11 +1,11 @@
-using NUnit.Framework.Legacy;
-
-using SQLDaosPackage.Injectors;
-
 using System.Data;
 using System.Text;
 
 using MySql.Data.MySqlClient;
+
+using NUnit.Framework.Legacy;
+
+using SQLDaosPackage.Injectors;
 
 using Test.MySQL.Utils;
 
@@ -42,9 +42,9 @@ public class InjectorTest
         }
     }
 
-    private void TruncateAllTables(MySqlConnection _conn)
+    private void TruncateAllTables(MySqlConnection conn)
     {
-        MySqlCommand com = new MySqlCommand("TruncateAllTables", _conn);
+        MySqlCommand com = new MySqlCommand("TruncateAllTables", conn);
         com.CommandType = CommandType.StoredProcedure;
         com.ExecuteNonQuery();
     }
@@ -52,23 +52,23 @@ public class InjectorTest
     [Test]
     public void Check_succesfull_csv_file_injection()
     {
-        MySqlConnection? _connection = _databaseConnection;
-        ClassicAssert.NotNull(_connection);
-        
+        MySqlConnection? connection = _databaseConnection;
+        ClassicAssert.NotNull(connection);
+
         DataInjector injector = new Injector();
-        int injectionResult = injector.InjectData(_connection);
+        int injectionResult = injector.InjectData(connection);
 
         Assert.That(injectionResult, Is.EqualTo(12));
-        TruncateAllTables(_connection);
+        TruncateAllTables(connection);
     }
 
     [Test]
     public void Check_unsuccesfull_csv_file_injection()
     {
-        MySqlConnection _connection = new MySqlConnection("");
+        MySqlConnection connection = new MySqlConnection("");
 
         DataInjector injector = new Injector();
-        int injectionResult = injector.InjectData(_connection);
+        int injectionResult = injector.InjectData(connection);
 
         Assert.That(injectionResult, Is.EqualTo(-1));
     }
@@ -76,23 +76,23 @@ public class InjectorTest
     [Test]
     public async Task Check_succesfull_csv_file_injection_async()
     {
-        MySqlConnection? _connection = _databaseConnection;
-        ClassicAssert.NotNull(_connection);
+        MySqlConnection? connection = _databaseConnection;
+        ClassicAssert.NotNull(connection);
 
         DataInjector injector = new Injector();
-        int injectionResult = await injector.InjectDataAsync(_connection!);
+        int injectionResult = await injector.InjectDataAsync(connection!);
 
         Assert.That(injectionResult, Is.EqualTo(12));
-        TruncateAllTables(_connection!);
+        TruncateAllTables(connection!);
     }
 
     [Test]
     public async Task Check_unsuccesfull_csv_file_injection_async()
     {
-        MySqlConnection _connection = new MySqlConnection("");
+        MySqlConnection connection = new MySqlConnection("");
 
         DataInjector injector = new Injector();
-        int injectionResult = await injector.InjectDataAsync(_connection);
+        int injectionResult = await injector.InjectDataAsync(connection);
 
         Assert.That(injectionResult, Is.EqualTo(-1));
     }

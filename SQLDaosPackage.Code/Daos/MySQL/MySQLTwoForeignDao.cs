@@ -1,5 +1,5 @@
-using System.Text;
 using System.Data;
+using System.Text;
 
 using MySql.Data.MySqlClient;
 
@@ -8,15 +8,15 @@ namespace SQLDaosPackage.Daos.MySQL;
 public abstract class MySQLTwoForeignDao<T> : MySQLBaseDao<T>, ITwoForeignDao<T>
 {
     //! String to identify first table's indentifier.
-     /*!
-        Use inherited class' constructor to assign attribute's value.
-     */
+    /*!
+       Use inherited class' constructor to assign attribute's value.
+    */
     protected internal string _firstForeignKey = string.Empty;
 
     //! String to identify second table's indentifier.
-     /*!
-        Use inherited class' constructor to assign attribute's value.
-     */
+    /*!
+       Use inherited class' constructor to assign attribute's value.
+    */
     protected internal string _secondForeignKey = string.Empty;
 
     // Implementation to Read() method from ITwoForeignDao interface.

@@ -13,10 +13,10 @@ namespace SQLDaosPackage.Injectors;
 public interface IDataInjector
 {
     //! Method to inject the data.
-     /*!
-        \param connection Is the active MySQL connection which this method will use.
-        \return The number of rows inserted on the database.
-     */
+    /*!
+       \param connection Is the active MySQL connection which this method will use.
+       \return The number of rows inserted on the database.
+    */
     int InjectData(MySqlConnection connection);
 
     //! Asynchronous version of \c InjectData.

@@ -419,7 +419,22 @@ HTML_OUTPUT            = .
 # The default value is: AUTO_LIGHT.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_COLORSTYLE        = LIGHT
+HTML_COLORSTYLE        = TOGGLE
+
+# Base hue (0-359) for the generated color palette. 220 = blue.
+# This tag requires that the tag GENERATE_HTML is set to YES.
+
+HTML_COLORSTYLE_HUE    = 220
+
+# Saturation (0-255) applied to the base hue. Higher = more vivid.
+# This tag requires that the tag GENERATE_HTML is set to YES.
+
+HTML_COLORSTYLE_SAT    = 130
+
+# Gamma (40-240) controlling lightness/contrast. 80 = default.
+# This tag requires that the tag GENERATE_HTML is set to YES.
+
+HTML_COLORSTYLE_GAMMA  = 80
 
 # The ENUM_VALUES_PER_LINE tag can be used to set the number of enum values that
 # Doxygen will group on one line in the generated HTML documentation.
@@ -436,6 +451,47 @@ ENUM_VALUES_PER_LINE   = 1
 # The default value is: NO.
 
 SHOW_ENUM_VALUES       = NO
+
+# If GENERATE_TREEVIEW is set to YES, Doxygen will generate a tree-like index
+# structure in the HTML output (besides or instead of the regular index).
+# This tag requires that the tag GENERATE_HTML is set to YES.
+
+GENERATE_TREEVIEW      = YES
+
+# If FULL_SIDEBAR is set to YES, the side panel spans the full page height
+# instead of being placed below the page header.
+# This tag requires that the tag GENERATE_TREEVIEW is set to YES.
+
+FULL_SIDEBAR           = YES
+
+# Width (in pixels) of the side panel in the HTML output.
+# This tag requires that the tag GENERATE_TREEVIEW is set to YES.
+
+TREEVIEW_WIDTH         = 280
+
+# If HTML_DYNAMIC_SECTIONS is set to YES, the generated HTML will contain
+# collapsible sections that the visitor can expand or hide via JavaScript.
+# This tag requires that the tag GENERATE_HTML is set to YES.
+
+HTML_DYNAMIC_SECTIONS  = YES
+
+# Custom stylesheet layered on top of doxygen.css (loaded after, so it wins).
+# This tag requires that the tag GENERATE_HTML is set to YES.
+
+HTML_EXTRA_STYLESHEET  = doxygen-extra/doxygen-custom.css
+
+# Extra files copied into the HTML output dir. Used here for the JS script
+# that tags interface nodes in inheritance SVGs with a CSS class.
+# This tag requires that the tag GENERATE_HTML is set to YES.
+
+HTML_EXTRA_FILES       = doxygen-extra/doxygen-interface-highlight.js
+
+# Custom HTML header. Generated with `doxygen -w html` and patched to load
+# doxygen-interface-highlight.js. If Doxygen is upgraded and the default
+# header layout changes, regenerate and re-apply the <script> insertion.
+# This tag requires that the tag GENERATE_HTML is set to YES.
+
+HTML_HEADER            = doxygen-extra/header.html
 
 #---------------------------------------------------------------------------
 # Configuration options related to diagram generator tools
@@ -467,7 +523,7 @@ HAVE_DOT               = YES
 # The default value is: fontname=Helvetica,fontsize=10.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
-DOT_COMMON_ATTR        = "fontname=Helvetica,fontsize=20"
+DOT_COMMON_ATTR        = "fontname=Helvetica,fontsize=20,color=\"#2c5282\""
 
 # DOT_EDGE_ATTR is concatenated with DOT_COMMON_ATTR. For elegant style you can
 # add 'arrowhead=open, arrowtail=open, arrowsize=0.5'. <a
@@ -476,7 +532,7 @@ DOT_COMMON_ATTR        = "fontname=Helvetica,fontsize=20"
 # The default value is: labelfontname=Helvetica,labelfontsize=10.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
-DOT_EDGE_ATTR          = "penwidth=5"
+DOT_EDGE_ATTR          = "penwidth=5,color=\"#4a5568\""
 
 # DOT_NODE_ATTR is concatenated with DOT_COMMON_ATTR. For view without boxes
 # around nodes set 'shape=plain' or 'shape=plaintext' <a
@@ -484,7 +540,7 @@ DOT_EDGE_ATTR          = "penwidth=5"
 # The default value is: shape=box,height=0.2,width=0.4.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
-DOT_NODE_ATTR          = "shape=box,height=0.2,width=0.4"
+DOT_NODE_ATTR          = "shape=box,height=0.4,width=0.6,style=\"rounded,filled\",fillcolor=\"#f0f4f8\",color=\"#2c5282\""
 
 # You can set the path where dot can find font specified with fontname in
 # DOT_COMMON_ATTR and others dot attributes.

@@ -10,16 +10,16 @@ public class MySQLConnectionUtils
 
     public MySqlConnection? GetConnection()
     {
-        MySqlConnection _connection = new MySqlConnection(ConnectionString);
+        MySqlConnection connection = new MySqlConnection(ConnectionString);
         try
         {
-            _connection.Open();
+            connection.Open();
         }
         catch
         {
-            _connection = null!;
+            connection = null!;
         }
 
-        return _connection;
+        return connection;
     }
 }

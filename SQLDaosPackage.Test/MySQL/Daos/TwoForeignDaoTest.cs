@@ -1,12 +1,12 @@
+using System.Data;
+using System.Linq;
+using System.Text;
+
+using MySql.Data.MySqlClient;
+
 using NUnit.Framework.Legacy;
 
 using SQLDaosPackage.Daos.MySQL;
-
-using System.Data;
-using System.Text;
-using System.Linq;
-
-using MySql.Data.MySqlClient;
 
 using Test.MySQL.Entities.Single;
 using Test.MySQL.Entities.TwoForeign;
@@ -32,14 +32,14 @@ public class TwoForeignDaoTest
         _databaseConnection?.Dispose();
     }
 
-    private void TruncateAllTables(MySqlConnection _conn)
+    private void TruncateAllTables(MySqlConnection conn)
     {
-        MySqlCommand com = new MySqlCommand("TruncateAllTables", _conn);
+        MySqlCommand com = new MySqlCommand("TruncateAllTables", conn);
         com.CommandType = CommandType.StoredProcedure;
         com.ExecuteNonQuery();
     }
 
-    class UserBaseDao : MySQLSingleDao <User> 
+    class UserBaseDao : MySQLSingleDao<User>
     {
         public UserBaseDao()
         {
@@ -64,29 +64,29 @@ public class TwoForeignDaoTest
 
         protected override StringBuilder CreateCommandIntoStringBuilder(User entity)
         {
-            string IdConverted = entity.Id.ToString();
-            string UserNameConverted = entity.UserName;
-            string RoleConverted = entity.Role;
+            string idConverted = entity.Id.ToString();
+            string userNameConverted = entity.UserName;
+            string roleConverted = entity.Role;
 
             _sb = new StringBuilder();
             _sb.Append("INSERT INTO ").Append(_tableName).Append(" (Id,UserName,Role) ")
-                .Append("VALUES ('").Append(IdConverted).Append("','")
-                                    .Append(UserNameConverted).Append("','")
-                                    .Append(RoleConverted).Append("');");
+                .Append("VALUES ('").Append(idConverted).Append("','")
+                                    .Append(userNameConverted).Append("','")
+                                    .Append(roleConverted).Append("');");
             return _sb;
         }
 
         protected override StringBuilder UpdateCommandIntoStringBuilder(User entity)
         {
-            string IdConverted = entity.Id.ToString();
-            string UserNameConverted = entity.UserName;
-            string RoleConverted = entity.Role;
+            string idConverted = entity.Id.ToString();
+            string userNameConverted = entity.UserName;
+            string roleConverted = entity.Role;
 
             _sb = new StringBuilder();
             _sb.Append("UPDATE ").Append(_tableName)
-                .Append(" SET UserName = '").Append(UserNameConverted).Append("', ")
-                .Append(" Role = '").Append(RoleConverted).Append("' ")
-                .Append(" WHERE Id = '").Append(IdConverted).Append("';");
+                .Append(" SET UserName = '").Append(userNameConverted).Append("', ")
+                .Append(" Role = '").Append(roleConverted).Append("' ")
+                .Append(" WHERE Id = '").Append(idConverted).Append("';");
             return _sb;
         }
 
@@ -96,7 +96,7 @@ public class TwoForeignDaoTest
         }
     }
 
-    class TenantBaseDao : MySQLSingleDao <Tenant> 
+    class TenantBaseDao : MySQLSingleDao<Tenant>
     {
         public TenantBaseDao()
         {
@@ -120,13 +120,13 @@ public class TwoForeignDaoTest
 
         protected override StringBuilder CreateCommandIntoStringBuilder(Tenant entity)
         {
-            string IdConverted = entity.Id.ToString();
-            string NameConverted = entity.Name;
+            string idConverted = entity.Id.ToString();
+            string nameConverted = entity.Name;
 
             _sb = new StringBuilder();
             _sb.Append("INSERT INTO ").Append(_tableName).Append(" (Id,Name) ")
-                .Append("VALUES ('").Append(IdConverted).Append("','")
-                                    .Append(NameConverted).Append("');");
+                .Append("VALUES ('").Append(idConverted).Append("','")
+                                    .Append(nameConverted).Append("');");
             return _sb;
         }
 
@@ -141,7 +141,7 @@ public class TwoForeignDaoTest
         }
     }
 
-    class TenantDomainDao : MySQLTwoForeignDao <TenantDomain> 
+    class TenantDomainDao : MySQLTwoForeignDao<TenantDomain>
     {
         public TenantDomainDao()
         {
@@ -167,13 +167,13 @@ public class TwoForeignDaoTest
 
         protected override StringBuilder CreateCommandIntoStringBuilder(TenantDomain entity)
         {
-            string UserIdConverted = entity.UserId.ToString();
-            string TenantIdConverted = entity.TenantId.ToString();
+            string userIdConverted = entity.UserId.ToString();
+            string tenantIdConverted = entity.TenantId.ToString();
 
             _sb = new StringBuilder();
             _sb.Append("INSERT INTO ").Append(_tableName).Append(" (UserId,TenantId) ")
-                .Append("VALUES ('").Append(UserIdConverted).Append("','")
-                                    .Append(TenantIdConverted).Append("');");
+                .Append("VALUES ('").Append(userIdConverted).Append("','")
+                                    .Append(tenantIdConverted).Append("');");
             return _sb;
         }
 
@@ -217,25 +217,25 @@ public class TwoForeignDaoTest
     public void Check_succesfully_tenant_domain_creation()
     {
         TruncateAllTables(_databaseConnection!);
-        
+
         User user = new User
-                    {
-                        Id = Guid.NewGuid(),
-                        UserName = "UserName",
-                        Role = "Role"
-                    };
+        {
+            Id = Guid.NewGuid(),
+            UserName = "UserName",
+            Role = "Role"
+        };
 
         Tenant tenant = new Tenant
-                    {
-                        Id = Guid.NewGuid(),
-                        Name = "Tenant"
-                    };
-        
+        {
+            Id = Guid.NewGuid(),
+            Name = "Tenant"
+        };
+
         TenantDomain tenantDomain = new TenantDomain
-                    {
-                        UserId = user.Id,
-                        TenantId = tenant.Id
-                    };
+        {
+            UserId = user.Id,
+            TenantId = tenant.Id
+        };
 
         UserBaseDao userDao = new UserBaseDao();
         TenantBaseDao tenantDao = new TenantBaseDao();
@@ -243,8 +243,8 @@ public class TwoForeignDaoTest
 
         userDao.Create(user);
         tenantDao.Create(tenant);
-        
-        
+
+
         int creationResult = tenantDomainDao.Create(tenantDomain);
 
         Assert.That(creationResult, Is.EqualTo(1));
@@ -254,25 +254,25 @@ public class TwoForeignDaoTest
     public void Check_read_operation()
     {
         TruncateAllTables(_databaseConnection!);
-        
+
         User user = new User
-                    {
-                        Id = Guid.NewGuid(),
-                        UserName = "UserName",
-                        Role = "Role"
-                    };
+        {
+            Id = Guid.NewGuid(),
+            UserName = "UserName",
+            Role = "Role"
+        };
 
         Tenant tenant = new Tenant
-                    {
-                        Id = Guid.NewGuid(),
-                        Name = "Tenant"
-                    };
-        
+        {
+            Id = Guid.NewGuid(),
+            Name = "Tenant"
+        };
+
         TenantDomain tenantDomain = new TenantDomain
-                    {
-                        UserId = user.Id,
-                        TenantId = tenant.Id
-                    };
+        {
+            UserId = user.Id,
+            TenantId = tenant.Id
+        };
 
         UserBaseDao userDao = new UserBaseDao();
         TenantBaseDao tenantDao = new TenantBaseDao();
@@ -282,33 +282,33 @@ public class TwoForeignDaoTest
         tenantDao.Create(tenant);
         tenantDomainDao.Create(tenantDomain);
 
-        TenantDomain tenantDomainFromDB = tenantDomainDao.Read(user.Id,tenant.Id)!;
+        TenantDomain tenantDomainFromDB = tenantDomainDao.Read(user.Id, tenant.Id)!;
 
         Assert.That(tenantDomain.UserId, Is.EqualTo(tenantDomainFromDB.UserId));
     }
-    
+
     [Test]
     public void Check_delete_operation()
     {
         TruncateAllTables(_databaseConnection!);
         User user = new User
-                    {
-                        Id = Guid.NewGuid(),
-                        UserName = "UserName",
-                        Role = "Role"
-                    };
+        {
+            Id = Guid.NewGuid(),
+            UserName = "UserName",
+            Role = "Role"
+        };
 
         Tenant tenant = new Tenant
-                    {
-                        Id = Guid.NewGuid(),
-                        Name = "Tenant"
-                    };
+        {
+            Id = Guid.NewGuid(),
+            Name = "Tenant"
+        };
 
         TenantDomain tenantDomain = new TenantDomain
-                    {
-                        UserId = user.Id,
-                        TenantId = tenant.Id
-                    };
+        {
+            UserId = user.Id,
+            TenantId = tenant.Id
+        };
 
         UserBaseDao userDao = new UserBaseDao();
         TenantBaseDao tenantDao = new TenantBaseDao();
@@ -318,7 +318,7 @@ public class TwoForeignDaoTest
         tenantDao.Create(tenant);
         tenantDomainDao.Create(tenantDomain);
 
-        bool deleted = tenantDomainDao.Delete(tenantDomain.UserId,tenantDomain.TenantId);
+        bool deleted = tenantDomainDao.Delete(tenantDomain.UserId, tenantDomain.TenantId);
         ClassicAssert.True(deleted);
     }
 
@@ -328,23 +328,23 @@ public class TwoForeignDaoTest
         TruncateAllTables(_databaseConnection!);
 
         User user = new User
-                    {
-                        Id = Guid.NewGuid(),
-                        UserName = "UserName",
-                        Role = "Role"
-                    };
+        {
+            Id = Guid.NewGuid(),
+            UserName = "UserName",
+            Role = "Role"
+        };
 
         Tenant tenant = new Tenant
-                    {
-                        Id = Guid.NewGuid(),
-                        Name = "Tenant"
-                    };
+        {
+            Id = Guid.NewGuid(),
+            Name = "Tenant"
+        };
 
         TenantDomain tenantDomain = new TenantDomain
-                    {
-                        UserId = user.Id,
-                        TenantId = tenant.Id
-                    };
+        {
+            UserId = user.Id,
+            TenantId = tenant.Id
+        };
 
         UserBaseDao userDao = new UserBaseDao();
         TenantBaseDao tenantDao = new TenantBaseDao();
@@ -364,23 +364,23 @@ public class TwoForeignDaoTest
         TruncateAllTables(_databaseConnection!);
 
         User user = new User
-                    {
-                        Id = Guid.NewGuid(),
-                        UserName = "UserName",
-                        Role = "Role"
-                    };
+        {
+            Id = Guid.NewGuid(),
+            UserName = "UserName",
+            Role = "Role"
+        };
 
         Tenant tenant = new Tenant
-                    {
-                        Id = Guid.NewGuid(),
-                        Name = "Tenant"
-                    };
+        {
+            Id = Guid.NewGuid(),
+            Name = "Tenant"
+        };
 
         TenantDomain tenantDomain = new TenantDomain
-                    {
-                        UserId = user.Id,
-                        TenantId = tenant.Id
-                    };
+        {
+            UserId = user.Id,
+            TenantId = tenant.Id
+        };
 
         UserBaseDao userDao = new UserBaseDao();
         TenantBaseDao tenantDao = new TenantBaseDao();
@@ -400,23 +400,23 @@ public class TwoForeignDaoTest
     {
         TruncateAllTables(_databaseConnection!);
         User user = new User
-                    {
-                        Id = Guid.NewGuid(),
-                        UserName = "UserName",
-                        Role = "Role"
-                    };
+        {
+            Id = Guid.NewGuid(),
+            UserName = "UserName",
+            Role = "Role"
+        };
 
         Tenant tenant = new Tenant
-                    {
-                        Id = Guid.NewGuid(),
-                        Name = "Tenant"
-                    };
+        {
+            Id = Guid.NewGuid(),
+            Name = "Tenant"
+        };
 
         TenantDomain tenantDomain = new TenantDomain
-                    {
-                        UserId = user.Id,
-                        TenantId = tenant.Id
-                    };
+        {
+            UserId = user.Id,
+            TenantId = tenant.Id
+        };
 
         UserBaseDao userDao = new UserBaseDao();
         TenantBaseDao tenantDao = new TenantBaseDao();

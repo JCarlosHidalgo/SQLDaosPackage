@@ -1,5 +1,3 @@
 FROM juancarloshidalgososa/doxygen:1.17.0
 
-WORKDIR /docs/
-
 COPY ./SQLDaosPackage.Code/ ./

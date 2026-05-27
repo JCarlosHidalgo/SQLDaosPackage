@@ -46,7 +46,11 @@ public static class MySQLRetryPolicy
             catch (MySqlException ex) when (transaction is null && IsTransient(ex))
             {
                 lastException = ex;
-                if (attempt == MaxAttempts) break;
+                if (attempt == MaxAttempts)
+                {
+                    break;
+                }
+
                 await Task.Delay(delayMilliseconds);
                 delayMilliseconds *= 2;
                 await EnsureOpenAsync(connection);
@@ -78,8 +82,15 @@ public static class MySQLRetryPolicy
     /// </summary>
     public static async Task EnsureOpenAsync(MySqlConnection? connection)
     {
-        if (connection is null) return;
-        if (connection.State == ConnectionState.Open) return;
+        if (connection is null)
+        {
+            return;
+        }
+
+        if (connection.State == ConnectionState.Open)
+        {
+            return;
+        }
 
         try
         {
@@ -102,8 +113,15 @@ public static class MySQLRetryPolicy
     /// </summary>
     public static void EnsureOpen(MySqlConnection? connection)
     {
-        if (connection is null) return;
-        if (connection.State == ConnectionState.Open) return;
+        if (connection is null)
+        {
+            return;
+        }
+
+        if (connection.State == ConnectionState.Open)
+        {
+            return;
+        }
 
         try
         {

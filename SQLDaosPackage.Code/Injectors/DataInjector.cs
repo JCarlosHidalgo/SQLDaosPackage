@@ -13,9 +13,9 @@ namespace SQLDaosPackage.Injectors;
 public class DataInjector : IDataInjector
 {
     //! MySQL command to inject the data.
-     /*!
-        To assign attribute's value, use the constructor of inherited class.
-     */
+    /*!
+       To assign attribute's value, use the constructor of inherited class.
+    */
     protected internal string? _injectionCommand;
 
     public int InjectData(MySqlConnection connection)

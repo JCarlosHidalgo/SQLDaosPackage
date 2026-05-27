@@ -16,20 +16,20 @@ namespace SQLDaosPackage.Daos;
 public interface IDao<T>
 {
     //! Creates a new entity.
-     /*!
-        \param element Is the entity to be created.
-        \return The number of rows affected by the query.
-     */
+    /*!
+       \param element Is the entity to be created.
+       \return The number of rows affected by the query.
+    */
     int Create(T element);
 
     //! Uses a List of \c T to obtain all entities from table.
     List<T> ReadAll();
 
     //! Updates an entity.
-     /*!
-        \param element Is the entity to be updated.
-        \return The number of rows affected by the query.
-     */
+    /*!
+       \param element Is the entity to be updated.
+       \return The number of rows affected by the query.
+    */
     int Update(T element);
 
     //! Asynchronous version of \c Create.

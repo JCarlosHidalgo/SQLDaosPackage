@@ -1,12 +1,12 @@
+using System.Data;
+using System.Linq;
+using System.Text;
+
+using MySql.Data.MySqlClient;
+
 using NUnit.Framework.Legacy;
 
 using SQLDaosPackage.Daos.MySQL;
-
-using System.Data;
-using System.Text;
-using System.Linq;
-
-using MySql.Data.MySqlClient;
 
 using Test.MySQL.Entities.Single;
 using Test.MySQL.Utils;
@@ -31,14 +31,14 @@ public class BaseDaoTest
         _databaseConnection?.Dispose();
     }
 
-    private void TruncateAllTables(MySqlConnection _conn)
+    private void TruncateAllTables(MySqlConnection conn)
     {
-        MySqlCommand com = new MySqlCommand("TruncateAllTables", _conn);
+        MySqlCommand com = new MySqlCommand("TruncateAllTables", conn);
         com.CommandType = CommandType.StoredProcedure;
         com.ExecuteNonQuery();
     }
 
-    class UserBaseDao : MySQLSingleDao <User> 
+    class UserBaseDao : MySQLSingleDao<User>
     {
         public UserBaseDao()
         {
@@ -70,29 +70,29 @@ public class BaseDaoTest
 
         protected override StringBuilder CreateCommandIntoStringBuilder(User entity)
         {
-            string IdConverted = entity.Id.ToString();
-            string UserNameConverted = entity.UserName;
-            string RoleConverted = entity.Role;
+            string idConverted = entity.Id.ToString();
+            string userNameConverted = entity.UserName;
+            string roleConverted = entity.Role;
 
             _sb = new StringBuilder();
             _sb.Append("INSERT INTO ").Append(_tableName).Append(" (Id,UserName,Role) ")
-                .Append("VALUES ('").Append(IdConverted).Append("','")
-                                    .Append(UserNameConverted).Append("','")
-                                    .Append(RoleConverted).Append("');");
+                .Append("VALUES ('").Append(idConverted).Append("','")
+                                    .Append(userNameConverted).Append("','")
+                                    .Append(roleConverted).Append("');");
             return _sb;
         }
 
         protected override StringBuilder UpdateCommandIntoStringBuilder(User entity)
         {
-            string IdConverted = entity.Id.ToString();
-            string UserNameConverted = entity.UserName;
-            string RoleConverted = entity.Role;
+            string idConverted = entity.Id.ToString();
+            string userNameConverted = entity.UserName;
+            string roleConverted = entity.Role;
 
             _sb = new StringBuilder();
             _sb.Append("UPDATE ").Append(_tableName)
-                .Append(" SET UserName = '").Append(UserNameConverted).Append("', ")
-                .Append(" Role = '").Append(RoleConverted).Append("' ")
-                .Append(" WHERE Id = '").Append(IdConverted).Append("';");
+                .Append(" SET UserName = '").Append(userNameConverted).Append("', ")
+                .Append(" Role = '").Append(roleConverted).Append("' ")
+                .Append(" WHERE Id = '").Append(idConverted).Append("';");
             return _sb;
         }
 
@@ -108,7 +108,7 @@ public class BaseDaoTest
             com.Parameters["@userRole"].Direction = ParameterDirection.Input;
 
             _mySqlReader = com.ExecuteReader();
-        
+
             return MapReaderToEntitiesList();
         }
     }
@@ -126,12 +126,12 @@ public class BaseDaoTest
         TruncateAllTables(_databaseConnection!);
         UserBaseDao dao = new UserBaseDao();
         User user = new User
-                    {
-                        Id = Guid.NewGuid(),
-                        UserName = "UserName",
-                        Role = "Role"
-                    };
-        
+        {
+            Id = Guid.NewGuid(),
+            UserName = "UserName",
+            Role = "Role"
+        };
+
         int creationResult = dao.Create(user);
 
         Assert.That(creationResult, Is.EqualTo(1));
@@ -143,12 +143,12 @@ public class BaseDaoTest
         TruncateAllTables(_databaseConnection!);
         UserBaseDao dao = new UserBaseDao();
         User user = new User
-                    {
-                        Id = Guid.NewGuid(),
-                        UserName = "UserName",
-                        Role = "Role"
-                    };
-        
+        {
+            Id = Guid.NewGuid(),
+            UserName = "UserName",
+            Role = "Role"
+        };
+
         int creationResult = dao.Create(user);
         Assert.That(creationResult, Is.EqualTo(1));
 
@@ -179,12 +179,14 @@ public class BaseDaoTest
                 Id = new Guid("00000000-0000-0000-0000-000000000002"),
                 UserName = "UserName3",
                 Role = "Role3"
-            },    
+            },
         };
 
         foreach (User user in users)
+        {
             dao.Create(user);
-        
+        }
+
         List<User> usersFromDB = dao.ReadAll();
 
         Assert.That(usersFromDB.ElementAt(0).Id, Is.EqualTo(users.ElementAt(0).Id));
@@ -198,17 +200,17 @@ public class BaseDaoTest
         TruncateAllTables(_databaseConnection!);
         UserBaseDao dao = new UserBaseDao();
         dao.Create(new User()
-            {
-                Id = Guid.NewGuid(),
-                UserName = "UserName",
-                Role = "RoleMatch"
-            });
+        {
+            Id = Guid.NewGuid(),
+            UserName = "UserName",
+            Role = "RoleMatch"
+        });
         dao.Create(new User()
-            {
-                Id = Guid.NewGuid(),
-                UserName = "UserName",
-                Role = "RoleNotMatch"
-            });
+        {
+            Id = Guid.NewGuid(),
+            UserName = "UserName",
+            Role = "RoleNotMatch"
+        });
 
         List<User> users = dao.GetUsersWithRoleMatching("RoleMatch");
         Assert.That(users.ElementAt(0).Role, Is.EqualTo("RoleMatch"));
@@ -221,11 +223,11 @@ public class BaseDaoTest
         UserBaseDao dao = new UserBaseDao();
         Guid guid = Guid.NewGuid();
         User user = new User()
-            {
-                Id = guid,
-                UserName = "UserName",
-                Role = "UserRole"
-            };
+        {
+            Id = guid,
+            UserName = "UserName",
+            Role = "UserRole"
+        };
         dao.Create(user);
 
         user.UserName = "AnotherUserName";
@@ -242,11 +244,11 @@ public class BaseDaoTest
         TruncateAllTables(_databaseConnection!);
         UserBaseDao dao = new UserBaseDao();
         User user = new User()
-            {
-                Id = Guid.NewGuid(),
-                UserName = "UserName",
-                Role = "UserRole"
-            };
+        {
+            Id = Guid.NewGuid(),
+            UserName = "UserName",
+            Role = "UserRole"
+        };
         dao.Create(user);
         bool deleted = dao.Delete(user.Id);
         ClassicAssert.True(deleted);
@@ -258,11 +260,11 @@ public class BaseDaoTest
         TruncateAllTables(_databaseConnection!);
         UserBaseDao dao = new UserBaseDao();
         User user = new User
-                    {
-                        Id = Guid.NewGuid(),
-                        UserName = "UserName",
-                        Role = "Role"
-                    };
+        {
+            Id = Guid.NewGuid(),
+            UserName = "UserName",
+            Role = "Role"
+        };
 
         int creationResult = await dao.CreateAsync(user);
 
@@ -275,11 +277,11 @@ public class BaseDaoTest
         TruncateAllTables(_databaseConnection!);
         UserBaseDao dao = new UserBaseDao();
         User user = new User
-                    {
-                        Id = Guid.NewGuid(),
-                        UserName = "UserName",
-                        Role = "Role"
-                    };
+        {
+            Id = Guid.NewGuid(),
+            UserName = "UserName",
+            Role = "Role"
+        };
 
         int creationResult = await dao.CreateAsync(user);
         Assert.That(creationResult, Is.EqualTo(1));
@@ -315,7 +317,9 @@ public class BaseDaoTest
         };
 
         foreach (User user in users)
+        {
             await dao.CreateAsync(user);
+        }
 
         List<User> usersFromDB = await dao.ReadAllAsync();
 
@@ -331,11 +335,11 @@ public class BaseDaoTest
         UserBaseDao dao = new UserBaseDao();
         Guid guid = Guid.NewGuid();
         User user = new User()
-            {
-                Id = guid,
-                UserName = "UserName",
-                Role = "UserRole"
-            };
+        {
+            Id = guid,
+            UserName = "UserName",
+            Role = "UserRole"
+        };
         await dao.CreateAsync(user);
 
         user.UserName = "AnotherUserName";
@@ -352,11 +356,11 @@ public class BaseDaoTest
         TruncateAllTables(_databaseConnection!);
         UserBaseDao dao = new UserBaseDao();
         User user = new User()
-            {
-                Id = Guid.NewGuid(),
-                UserName = "UserName",
-                Role = "UserRole"
-            };
+        {
+            Id = Guid.NewGuid(),
+            UserName = "UserName",
+            Role = "UserRole"
+        };
         await dao.CreateAsync(user);
         bool deleted = await dao.DeleteAsync(user.Id);
         ClassicAssert.True(deleted);

@@ -17,6 +17,3 @@ WORKDIR /test-env/
 COPY ./ ./
 
 WORKDIR /test-env/SQLDaosPackage.Test
-
-#dotnet test -s ./.runsettings
-#dotnet reportgenerator -reports:"**/*.cobertura.xml" -targetdir:./TestResults
