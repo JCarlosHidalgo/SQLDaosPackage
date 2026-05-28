@@ -62,34 +62,6 @@ public class TwoForeignDaoTest
             return new List<User>();
         }
 
-        protected override StringBuilder CreateCommandIntoStringBuilder(User entity)
-        {
-            string idConverted = entity.Id.ToString();
-            string userNameConverted = entity.UserName;
-            string roleConverted = entity.Role;
-
-            _sb = new StringBuilder();
-            _sb.Append("INSERT INTO ").Append(_tableName).Append(" (Id,UserName,Role) ")
-                .Append("VALUES ('").Append(idConverted).Append("','")
-                                    .Append(userNameConverted).Append("','")
-                                    .Append(roleConverted).Append("');");
-            return _sb;
-        }
-
-        protected override StringBuilder UpdateCommandIntoStringBuilder(User entity)
-        {
-            string idConverted = entity.Id.ToString();
-            string userNameConverted = entity.UserName;
-            string roleConverted = entity.Role;
-
-            _sb = new StringBuilder();
-            _sb.Append("UPDATE ").Append(_tableName)
-                .Append(" SET UserName = '").Append(userNameConverted).Append("', ")
-                .Append(" Role = '").Append(roleConverted).Append("' ")
-                .Append(" WHERE Id = '").Append(idConverted).Append("';");
-            return _sb;
-        }
-
         public string GetTableName()
         {
             return _tableName!;
@@ -118,23 +90,6 @@ public class TwoForeignDaoTest
             return new List<Tenant>();
         }
 
-        protected override StringBuilder CreateCommandIntoStringBuilder(Tenant entity)
-        {
-            string idConverted = entity.Id.ToString();
-            string nameConverted = entity.Name;
-
-            _sb = new StringBuilder();
-            _sb.Append("INSERT INTO ").Append(_tableName).Append(" (Id,Name) ")
-                .Append("VALUES ('").Append(idConverted).Append("','")
-                                    .Append(nameConverted).Append("');");
-            return _sb;
-        }
-
-        protected override StringBuilder UpdateCommandIntoStringBuilder(Tenant entity)
-        {
-            return new StringBuilder();
-        }
-
         public string GetTableName()
         {
             return _tableName!;
@@ -147,8 +102,6 @@ public class TwoForeignDaoTest
         {
             _connection = _databaseConnection!;
             _tableName = "TenantDomain";
-            _firstForeignKey = "UserId";
-            _secondForeignKey = "TenantId";
         }
 
         protected override TenantDomain MapReaderToEntity()
@@ -163,18 +116,6 @@ public class TwoForeignDaoTest
         protected override List<TenantDomain> MapReaderToEntitiesList()
         {
             return new List<TenantDomain>();
-        }
-
-        protected override StringBuilder CreateCommandIntoStringBuilder(TenantDomain entity)
-        {
-            string userIdConverted = entity.UserId.ToString();
-            string tenantIdConverted = entity.TenantId.ToString();
-
-            _sb = new StringBuilder();
-            _sb.Append("INSERT INTO ").Append(_tableName).Append(" (UserId,TenantId) ")
-                .Append("VALUES ('").Append(userIdConverted).Append("','")
-                                    .Append(tenantIdConverted).Append("');");
-            return _sb;
         }
 
         protected override StringBuilder UpdateCommandIntoStringBuilder(TenantDomain entity)

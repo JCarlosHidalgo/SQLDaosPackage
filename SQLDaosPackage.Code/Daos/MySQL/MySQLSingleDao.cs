@@ -1,7 +1,9 @@
-using System.Data;
 using System.Text;
 
 using MySql.Data.MySqlClient;
+
+using SQLDaosPackage.Entities;
+using SQLDaosPackage.Entities.Attributes;
 
 namespace SQLDaosPackage.Daos.MySQL;
 
@@ -12,10 +14,23 @@ namespace SQLDaosPackage.Daos.MySQL;
     This Dao represents a MySQL table that does not have any foreign key relationships
     with other ones, it also works with tables that only have one foreign key
     relationship.
-    \param T Is the entity over this interface provides its methods.
+    \param T Is the entity over this interface provides its methods, constrained to
+    \c IEntity to enforce the marker contract at compile time. The identifier
+    property must be marked with \c [Identificator] and named \c Id (the hard-coded
+    SQL still targets that column).
   */
-public abstract class MySQLSingleDao<T> : MySQLBaseDao<T>, ISingleDao<T>
+public abstract class MySQLSingleDao<T> : MySQLBaseDao<T>, ISingleDao<T> where T : IEntity
 {
+    protected MySQLSingleDao()
+    {
+        string identificator = EntityKeyResolver.ResolvePropertyName<IdentificatorAttribute>(typeof(T));
+        if (identificator != "Id")
+        {
+            throw new InvalidOperationException(
+                $"Entity type '{typeof(T).FullName}' marks '{identificator}' with [Identificator], but MySQLSingleDao requires the identifier property to be named 'Id'.");
+        }
+    }
+
     // Implementation to Read() method from ISingleDao interface.
     public T? Read(Guid id)
     {

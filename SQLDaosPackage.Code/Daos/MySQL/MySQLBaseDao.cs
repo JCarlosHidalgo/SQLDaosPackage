@@ -3,6 +3,8 @@ using System.Text;
 
 using MySql.Data.MySqlClient;
 
+using SQLDaosPackage.Entities;
+
 namespace SQLDaosPackage.Daos.MySQL;
 
 /// <summary>
@@ -92,17 +94,50 @@ public abstract class MySQLBaseDao<T> : IDao<T>
 
     //! String builder to set the command's text to create a new entity.
     /*!
-       By default, when implementing this function, \c Create() method is ready
-       to use.
+       Default implementation generates a standard INSERT covering every property
+       discovered by \c EntityColumnsResolver and formatted by
+       \c MySqlLiteralFormatter. Override to delegate to a stored procedure or to
+       emit custom SQL.
     */
-    protected internal abstract StringBuilder CreateCommandIntoStringBuilder(T entity);
+    protected internal virtual StringBuilder CreateCommandIntoStringBuilder(T entity)
+    {
+        IReadOnlyList<EntityColumnDescriptor> columns = EntityColumnsResolver.ResolvePersistedColumns(typeof(T));
+        _sb = new StringBuilder();
+        _sb.Append("INSERT INTO ").Append(_tableName).Append(" (")
+           .AppendJoin(", ", columns.Select(column => column.ColumnName))
+           .Append(") VALUES (")
+           .AppendJoin(", ", columns.Select(column => MySqlLiteralFormatter.FormatValue(column.Property.GetValue(entity), column)))
+           .Append(");");
+        return _sb;
+    }
 
     //! String builder to set the command's text to update an entity.
     /*!
-       By default, when implementing this function, \c Update() method is ready
-       to use.
+       Default implementation generates a standard UPDATE that sets every
+       non-key column and filters by the single key column discovered through
+       \c [Identificator]. Entities without an \c [Identificator] (e.g. those
+       implementing \c ITwoForeignEntity or \c IThreeForeignEntity) are not
+       supported by the default and must override this method.
     */
-    protected internal abstract StringBuilder UpdateCommandIntoStringBuilder(T entity);
+    protected internal virtual StringBuilder UpdateCommandIntoStringBuilder(T entity)
+    {
+        IReadOnlyList<EntityColumnDescriptor> columns = EntityColumnsResolver.ResolvePersistedColumns(typeof(T));
+        EntityColumnDescriptor? key = columns.SingleOrDefault(column => column.IsKey);
+        if (key is null)
+        {
+            throw new InvalidOperationException(
+                $"Entity type '{typeof(T).FullName}' has no [Identificator] property, so the default UPDATE cannot be generated. Override UpdateCommandIntoStringBuilder in the concrete Dao.");
+        }
+
+        IEnumerable<EntityColumnDescriptor> updatable = columns.Where(column => !column.IsKey);
+        _sb = new StringBuilder();
+        _sb.Append("UPDATE ").Append(_tableName).Append(" SET ")
+           .AppendJoin(", ", updatable.Select(column => column.ColumnName + " = " + MySqlLiteralFormatter.FormatValue(column.Property.GetValue(entity), column)))
+           .Append(" WHERE ").Append(key.ColumnName).Append(" = ")
+           .Append(MySqlLiteralFormatter.FormatValue(key.Property.GetValue(entity), key))
+           .Append(';');
+        return _sb;
+    }
 
     // Implementation to Create() method from IDao interface.
     public int Create(T entity)

@@ -68,34 +68,6 @@ public class BaseDaoTest
             return _entitiesList;
         }
 
-        protected override StringBuilder CreateCommandIntoStringBuilder(User entity)
-        {
-            string idConverted = entity.Id.ToString();
-            string userNameConverted = entity.UserName;
-            string roleConverted = entity.Role;
-
-            _sb = new StringBuilder();
-            _sb.Append("INSERT INTO ").Append(_tableName).Append(" (Id,UserName,Role) ")
-                .Append("VALUES ('").Append(idConverted).Append("','")
-                                    .Append(userNameConverted).Append("','")
-                                    .Append(roleConverted).Append("');");
-            return _sb;
-        }
-
-        protected override StringBuilder UpdateCommandIntoStringBuilder(User entity)
-        {
-            string idConverted = entity.Id.ToString();
-            string userNameConverted = entity.UserName;
-            string roleConverted = entity.Role;
-
-            _sb = new StringBuilder();
-            _sb.Append("UPDATE ").Append(_tableName)
-                .Append(" SET UserName = '").Append(userNameConverted).Append("', ")
-                .Append(" Role = '").Append(roleConverted).Append("' ")
-                .Append(" WHERE Id = '").Append(idConverted).Append("';");
-            return _sb;
-        }
-
         public string GetTableName()
         {
             return _tableName!;

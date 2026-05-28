@@ -1,3 +1,5 @@
+using SQLDaosPackage.Entities;
+
 namespace SQLDaosPackage.Daos;
 
 /// <summary>
@@ -7,9 +9,10 @@ namespace SQLDaosPackage.Daos;
     This Dao represents a MySQL table that does not have any foreign key relationships
     with other ones, it also works with tables that only have one foreign key
     relationship.
-    \param T Is the entity over this interface provides its methods.
+    \param T Is the entity over this interface provides its methods, constrained to
+    \c IEntity to enforce the marker contract at compile time.
   */
-public interface ISingleDao<T> : IDao<T>
+public interface ISingleDao<T> : IDao<T> where T : IEntity
 {
     //! Obtains an entity based on a Guid.
     /*!
